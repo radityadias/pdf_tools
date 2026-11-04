@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --background: oklch(97.5% 0.006 245);
+  --card: oklch(100% 0 0);
+  --secondary: oklch(94% 0.015 245);
+  --secondary-foreground: oklch(29% 0.057 262);
+  --border: oklch(88% 0.02 245);
+  --foreground: oklch(25% 0.055 262);
+  --muted-foreground: oklch(48% 0.04 255);
+  --primary: oklch(48% 0.12 255);
+  --primary-hover: oklch(42% 0.13 258);
+  --primary-foreground: oklch(98% 0.005 250);
+  --accent: oklch(82% 0.14 80);
+  --accent-foreground: oklch(25% 0.055 262);
+}
+
+.dark {
+  --background: oklch(18% 0.03 262);
+  --card: oklch(22% 0.035 262);
+  --secondary: oklch(27% 0.04 260);
+  --secondary-foreground: oklch(92% 0.015 245);
+  --border: oklch(32% 0.04 260);
+  --foreground: oklch(95% 0.01 245);
+  --muted-foreground: oklch(72% 0.03 250);
+  --primary: oklch(72% 0.12 250);
+  --primary-hover: oklch(78% 0.11 250);
+  --primary-foreground: oklch(20% 0.05 262);
+  --accent: oklch(80% 0.14 80);
+  --accent-foreground: oklch(22% 0.05 262);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-card: var(--card);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-border: var(--border);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+}
+
+body {
+  @apply bg-background
+}
+
+p {
+  @apply text-base
+}
+
+h1 {
+  @apply font-bold text-2xl md:text-5xl
+}
+
+h2 {
+  @apply font-medium text-2xl md:text-5xl
+}
+
+h3 {
+  @apply md:text-xl
+}
