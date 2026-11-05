@@ -6,9 +6,10 @@ import { Menu, X } from 'lucide-react'
 export default function Navbar() {
     const [isActive, setIsActive] = useState(false)
     const navLinks = [
-        {name: "COMPRESS PDF", href: "/compress"},
-        {name: "MERGE PDF", href: "/merge"},
-        {name: "SPLIT PDF", href: "/split"},
+        {name: "COMPRESS PDF", href: "/compress-pdf"},
+        {name: "MERGE PDF", href: "/merge-pdf"},
+        {name: "SPLIT PDF", href: "/split-pdf"},
+        {name: "PDF TO JPG", href: "/pdf-to-jpg"}
     ]
 
     return (
@@ -18,8 +19,9 @@ export default function Navbar() {
             
             {/* Logo / Brand Name */}
             <div className="flex-shrink-0 flex items-center">
-                <a href="/" className="text-xl font-bold text-foreground">
-                BrandLogo
+                <a href="/" className="flex flex-row items-end font-bold text-foreground text-xl">
+                    <p className="text-primary">Daily</p>
+                    <p>PDF</p>
                 </a>
             </div>
 
@@ -47,7 +49,7 @@ export default function Navbar() {
             <div className="flex md:hidden items-center">
                 <button
                 onClick={() => setIsActive(!isActive)}
-                className="text-accent focus:outline-none"
+                className="text-primary focus:outline-none"
                 aria-label="Toggle Menu"
                 >
                 {isActive ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -67,14 +69,14 @@ export default function Navbar() {
                 <a
                 key={link.name}
                 href={link.href}
-                className="block text-accent active:text-primary font-medium py-2 rounded-md"
+                className="block text-primary active:text-primary font-medium py-2 rounded-md"
                 onClick={() => setIsActive(false)}
                 >
                 {link.name}
                 </a>
             ))}
             <div className="pt-4 border-t border-gray-100">
-                <button className="w-full bg-accent hover:bg-accent/70 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200">
+                <button className="w-full bg-primary hover:bg-accent/70 text-white font-medium px-4 py-2 rounded-lg transition-colors duration-200">
                 Get Started
                 </button>
             </div>
