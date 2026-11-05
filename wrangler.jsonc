@@ -2,16 +2,8 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "daily-pdf",
   "compatibility_date": "2026-11-03",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
-  "observability": {
-    "enabled": true
-  },
-  "services": [
-    {
-      "binding": "WORKER_SELF_REFERENCE",
-      "service": "daily-pdf"
-    }
-  ]
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page"
+  }
 }
