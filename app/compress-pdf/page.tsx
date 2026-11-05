@@ -1,5 +1,9 @@
 import Hero from "@/components/Hero";
 import PdfCompressor from "@/components/PdfCompressor";
+import JsonLd from "@/components/JsonLd";
+import { toolJsonLd, toolMetadata } from "@/lib/seo";
+
+export const metadata = toolMetadata("compress-pdf");
 
 export default function Compress() {
     const heroData = {
@@ -9,6 +13,7 @@ export default function Compress() {
     
     return (
         <>
+            <JsonLd data={toolJsonLd("compress-pdf")} />
             <Hero title={heroData.title} desc={heroData.desc} />
             <PdfCompressor />
         </>

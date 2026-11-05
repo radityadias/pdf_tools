@@ -1,15 +1,17 @@
 import Hero from "@/components/Hero";
 import Link from "next/link";
+import JsonLd from "@/components/JsonLd";
 import { Metadata } from "next";
 import { TOOLS } from "@/lib/tools";
 import { Gift, ShieldCheck, Zap } from "lucide-react";
+import { SITE } from "@/lib/site";
+import { websiteJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Free PDF Tools Online: Compress, Merge & Split PDF",
-  description:
-    "Free online PDF tools that work in your browser. Compress, merge and split PDFs with no signup. Your files never leave your device.",
+  title: { absolute: `Free PDF Tools: Compress, Merge & Split Online | ${SITE.name}` },
+  description: SITE.description,
+  alternates: { canonical: "/" },
 };
-
 const FEATURES = [
   {
     title: "Private by design",
@@ -59,6 +61,7 @@ export default function Home() {
   return (
     <>
       <main>
+        <JsonLd data={websiteJsonLd()} />
         <Hero title={heroData.title} desc={heroData.desc} />
 
         <section className="mx-auto max-w-5xl px-6 pb-16">
