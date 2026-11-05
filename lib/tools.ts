@@ -9,19 +9,19 @@ export type Tool = {
 
 export const TOOLS: Tool[] = [
   {
-    slug: "compress-pdf",
+    slug: "compress",
     title: "Compress PDF",
     desc: "Reduce the file size of scanned or image-heavy PDFs.",
     icon: Minimize2,
   },
   {
-    slug: "merge-pdf",
+    slug: "merge",
     title: "Merge PDF",
     desc: "Combine several PDFs into one, in the order you want.",
     icon: Combine,
   },
   {
-    slug: "split-pdf",
+    slug: "split",
     title: "Split PDF",
     desc: "Extract pages or cut a PDF into separate files.",
     icon: Scissors,
