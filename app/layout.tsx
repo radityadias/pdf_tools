@@ -53,6 +53,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <head>
         <meta name="google-adsense-account" content="ca-pub-2231908252676475"></meta>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
       <body className="min-h-full flex flex-col items-center">
         <Navbar />

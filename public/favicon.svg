@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" style="background: none;">
+  <!-- Card Background -->
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="oklch(100% 0 0)" stroke="oklch(88% 0.02 245)" stroke-width="2.5" />
+  
+  <!-- Subtle Top Accent Bar -->
+  <path d="M 16 6 L 48 6" stroke="oklch(82% 0.14 80)" stroke-width="3" stroke-linecap="round" />
+
+  <!-- "DAILY" Text in Primary Color -->
+  <text x="32" y="31" text-anchor="middle" fill="oklch(48% 0.12 255)" font-family="system-ui, -apple-system, BlinkMacSystemFont, &#39;Segoe UI&#39;, Roboto, sans-serif" font-weight="900" font-size="16" letter-spacing="1">DAILY</text>
+
+  <!-- "PDF" Badge Background -->
+  <rect x="14" y="38" width="36" height="17" rx="5" fill="oklch(48% 0.12 255)" />
+
+  <!-- "PDF" Badge Text -->
+  <text x="32" y="50.5" text-anchor="middle" fill="oklch(98% 0.005 250)" font-family="system-ui, -apple-system, BlinkMacSystemFont, &#39;Segoe UI&#39;, Roboto, sans-serif" font-weight="800" font-size="11" letter-spacing="1.5">PDF</text>
+</svg>
