@@ -51,6 +51,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${roboto.variable} ${raleway.variable} h-full antialiased`}
     >
+      <head>
+        <meta name="google-adsense-account" content="ca-pub-2231908252676475"></meta>
+      </head>
       <body className="min-h-full flex flex-col items-center">
         <Navbar />
         {children}
