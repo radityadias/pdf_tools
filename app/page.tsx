@@ -64,8 +64,8 @@ export default function Home() {
         <JsonLd data={websiteJsonLd()} />
         <Hero title={heroData.title} desc={heroData.desc} />
 
-        <section className="mx-auto max-w-7xl px-6 pb-16">
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <section className="mx-auto w-full px-6 md:px-12 pb-16">
+          <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             {TOOLS.map(({ slug, title, desc, icon: Icon }) => (
               <Link
                 key={slug}
@@ -77,7 +77,7 @@ export default function Home() {
                 <span className="grid h-12 w-12 place-items-center rounded-xl bg-secondary text-primary transition group-hover:bg-primary group-hover:text-primary-foreground">
                   <Icon className="h-6 w-6" aria-hidden />
                 </span>
-                <h2 className="mt-4 text-lg font-bold">{title}</h2>
+                <h3 className="mt-4 font-bold">{title}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
               </Link>
             ))}
@@ -86,8 +86,8 @@ export default function Home() {
 
         {/* Why */}
         <section className="border-y border-border bg-card">
-          <div className="mx-auto max-w-5xl px-6 py-16">
-            <div className="mx-auto max-w-2xl text-center">
+          <div className="mx-auto max-w-7xl px-6 py-16">
+            <div className="mx-auto max-w-3xl text-center">
               <p className="text-sm font-semibold uppercase tracking-wider text-primary">
                 Why choose us
               </p>
@@ -157,8 +157,8 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-4xl px-6 py-14">
-          <h2 className="text-center text-2xl font-bold">How it works</h2>
+        <section className="mx-auto max-w-6xl px-6 py-14">
+          <h2 className="text-center text-3xl font-bold">How it works</h2>
           <ol className="mt-8 grid gap-6 sm:grid-cols-3">
             {STEPS.map((s, i) => (
               <li key={s.title} className="text-center">
@@ -172,7 +172,7 @@ export default function Home() {
           </ol>
         </section>
 
-        <section className="mx-auto max-w-3xl px-6 pb-20">
+        <section className="mx-auto max-w-4xl px-6 pb-20">
           <h2 className="text-center text-2xl font-bold">
             Frequently asked questions
           </h2>

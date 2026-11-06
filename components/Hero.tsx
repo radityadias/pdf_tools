@@ -5,7 +5,7 @@ interface HeroProps {
 
 export default function Hero({title, desc} : HeroProps) {
     return (
-        <div className="flex flex-col justify-start items-center gap-3 mt-25 mb-7 md:mb-15 px-6 text-center">
+        <div className="flex flex-col justify-start items-center gap-3 mt-25 mb-7 md:mb-15 px-6 md:px-12 text-center">
             <h1>{title}</h1>
             <h3>{desc}</h3>
         </div>

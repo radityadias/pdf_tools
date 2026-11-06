@@ -15,26 +15,28 @@ export default function Navbar() {
 
     return (
         <nav className="fixed top-0 left-0 w-full bg-card border-b border-gray-200 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-16 items-center">
             
             {/* Logo / Brand Name */}
             <div className="flex-shrink-0 flex items-center">
-                <a href="/" className="flex flex-row items-end font-bold text-foreground text-xl">
-                    <p className="text-primary">Daily</p>
-                    <p>PDF</p>
+                <a href="/" className="flex flex-row items-end font-bold text-foreground">
+                    <p className="text-4xl!">PDF</p>
+                    <p className="text-primary text-xl!">Daily</p>
                 </a>
             </div>
 
             {/* Desktop Navigation Links */}
-            <div className="hidden md:flex space-x-8">
+            <div className="hidden md:flex space-x-12">
                 {navLinks.map((link) => (
                 <a
                     key={link.name}
                     href={link.href}
                     className="text-foreground hover:text-primary font-bold transition-colors duration-200"
                 >
-                    {link.name}
+                    <p className="text-md! md:text-md! lg:text-xl!">
+                        {link.name}
+                    </p>
                 </a>
                 ))}
             </div>
