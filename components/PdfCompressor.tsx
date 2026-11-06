@@ -67,7 +67,7 @@ export default function PdfCompressor() {
   }
 
   return (
-    <div className="mx-auto max-w-xl space-y-6 p-6">
+    <div className="mx-auto w-full max-w-7xl space-y-6 p-6">
       <div className="space-y-4">
         <input
           id="file-upload"
@@ -76,7 +76,7 @@ export default function PdfCompressor() {
           hidden
           onChange={(e) => {
             pick(e.target.files?.[0] ?? null);
-            e.target.value = ""; // lets the user re-pick the same file
+            e.target.value = "";
           }}
         />
 

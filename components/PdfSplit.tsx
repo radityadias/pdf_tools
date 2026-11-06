@@ -166,7 +166,7 @@ export default function PdfSplit() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6 p-6">
+    <div className="mx-auto w-full max-w-7xl space-y-6 p-6">
       {/* Upload */}
       <input
         id="split-upload"

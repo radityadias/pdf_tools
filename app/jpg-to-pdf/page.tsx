@@ -12,10 +12,10 @@ export default function JpgToPdfPage() {
   };
 
   return (
-    <main>
+    <>
       <JsonLd data={toolJsonLd("jpg-to-pdf")} />
       <Hero title={heroData.title} desc={heroData.desc} />
       <ImageToPdf />
-    </main>
+    </>
   );
 }

@@ -64,7 +64,7 @@ export default function Home() {
         <JsonLd data={websiteJsonLd()} />
         <Hero title={heroData.title} desc={heroData.desc} />
 
-        <section className="mx-auto max-w-5xl px-6 pb-16">
+        <section className="mx-auto max-w-7xl px-6 pb-16">
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {TOOLS.map(({ slug, title, desc, icon: Icon }) => (
               <Link
