@@ -3,6 +3,8 @@ import Hero from "@/components/Hero"
 import JsonLd from "@/components/JsonLd";
 import { toolJsonLd, toolMetadata } from "@/lib/seo";
 
+export const metadata = toolMetadata("merge-pdf");
+
 export default function Merge() {
     const heroData = {
         title: "PDF Merge",

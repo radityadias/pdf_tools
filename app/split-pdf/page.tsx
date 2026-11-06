@@ -1,7 +1,9 @@
 import Hero from "@/components/Hero";
 import PdfSplit from "@/components/PdfSplit";
 import JsonLd from "@/components/JsonLd";
-import { toolJsonLd } from "@/lib/seo";
+import { toolJsonLd, toolMetadata } from "@/lib/seo";
+
+export const metadata = toolMetadata("split-pdf");
 
 export default function Split() {
     const heroData = {

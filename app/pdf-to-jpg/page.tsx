@@ -1,9 +1,9 @@
-"use client";
-
 import Hero from "@/components/Hero";
 import PdfToImage from "@/components/PdfToImage";
 import JsonLd from "@/components/JsonLd";
-import { toolJsonLd } from "@/lib/seo";
+import { toolJsonLd, toolMetadata } from "@/lib/seo";
+
+export const metadata = toolMetadata("pdf-to-jpg");
 
 export default function Split() {
   const heroData = {
