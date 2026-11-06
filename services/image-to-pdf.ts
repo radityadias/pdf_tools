@@ -35,7 +35,7 @@ const QUALITY: Record<QualityPreset, { maxSide: number; jpeg: number; keepPng: b
 const MAX_PIXELS = 16_000_000; // iOS Safari caps total canvas pixels
 const FIT_LONG_SIDE = 842; // "Fit to image": longer side of the page, in points
 
-function canvasToBlob(canvas: HTMLCanvasElement, mime: string, quality: number): Promise<Blob> {
+function canvasToBlob(canvas: HTMLCanvasElement, mime: string, quality?: number): Promise<Blob> {
   return new Promise((resolve, reject) =>
     canvas.toBlob(
       (b) => (b ? resolve(b) : reject(new Error("Could not encode the image."))),
