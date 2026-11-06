@@ -9,7 +9,8 @@ export default function Navbar() {
         {name: "COMPRESS PDF", href: "/compress-pdf"},
         {name: "MERGE PDF", href: "/merge-pdf"},
         {name: "SPLIT PDF", href: "/split-pdf"},
-        {name: "PDF TO JPG", href: "/pdf-to-jpg"}
+        {name: "PDF TO JPG", href: "/pdf-to-jpg"},
+        {name: "JPG TO IMG", href: "/jpg-to-pdf"},
     ]
 
     return (

@@ -1,4 +1,10 @@
-import { Combine, Minimize2, Scissors, Images,  type LucideIcon } from "lucide-react";
+import {
+  Combine,
+  Minimize2,
+  Scissors,
+  Images,
+  type LucideIcon,
+} from "lucide-react";
 
 export type Tool = {
   slug: string;
@@ -45,5 +51,14 @@ export const TOOLS: Tool[] = [
     metaTitle: "Convert PDF Online Free: Convert PDF files into images",
     metaDescription:
       "Convert PDF files by page, every N pages, or by selecting pages visually. Free, private, runs in our browser.",
+  },
+  {
+    slug: "jpg-to-pdf",
+    title: "Image to PDF",
+    desc: "Turn JPG, PNG and other images into a single PDF.",
+    icon: Images,
+    metaTitle: "JPG to PDF Converter Online Free: Convert Images to PDF",
+    metaDescription:
+      "Convert JPG, PNG and WebP images to PDF for free. Reorder, rotate, choose page size and combine into one file. Runs in your browser, no upload.",
   },
 ];

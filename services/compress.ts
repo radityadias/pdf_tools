@@ -57,9 +57,7 @@ export async function compressPdf (
     const bytes = await out.save({  useObjectStreams: true });
     const compressed = new Blob([new Uint8Array(bytes)], { type: "application/pdf" });
     const useOriginal = compressed.size >= file.size;
-
-    console.log("original:", file.size, "rebuilt:", compressed.size, "preset:", preset);
-
+    
     return {
         blob: useOriginal ? file : compressed,
         before: file.size,
