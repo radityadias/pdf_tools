@@ -1,6 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
 
+import FileDropzone from "../layout/FileDropzone"
+import { PDF_FILES } from "@/lib/files"
+import { formatBytes as fmt } from "@/lib/format"
 import { useRef, useState } from "react"
 import { mergePdf, safeFilename } from "@/services/merge"
 import { renderFirstPage } from "@/services/preview"
@@ -15,15 +18,9 @@ type Item = {
   pages?: number
 }
 
-const fmt = (n: number) =>
-  n > 1_048_576 ? `${(n / 1_048_576).toFixed(2)} MB` : `${(n / 1024).toFixed(0)} KB`
-
-const isPdf = (f: File) => f.type === "application/pdf" || /\.pdf$/i.test(f.name)
-
 export default function PdfMerge() {
   const [items, setItems] = useState<Item[]>([])
   const [outName, setOutName] = useState("merged")
-  const [dragging, setDragging] = useState(false) // files dragged in from the OS
   const [overId, setOverId] = useState<string | null>(null) // reorder drop target
 
   const [progress, setProgress] = useState(0)
@@ -54,23 +51,7 @@ export default function PdfMerge() {
     setItems((prev) => prev.map((i) => (i.id === id ? { ...i, ...changes } : i)))
   }
 
-  async function addFiles(list: FileList | File[] | null) {
-    if (!list) return
-    const incoming = Array.from(list)
-    if (incoming.length === 0) return
-
-    const pdfs = incoming.filter(isPdf)
-    const skipped = incoming.length - pdfs.length
-
-    const room = Math.max(0, MAX_FILES - items.length)
-    const accepted = pdfs.slice(0, room)
-
-    const notes: string[] = []
-    if (skipped > 0) notes.push(`${skipped} non-PDF file(s) were ignored.`)
-    if (pdfs.length > room) notes.push(`Limit is ${MAX_FILES} files, so some were not added.`)
-    setError(notes.length ? notes.join(" ") : null)
-
-    if (accepted.length === 0) return
+  async function addFiles(accepted: File[]) {
     clearResult()
 
     const added: Item[] = accepted.map((file) => ({
@@ -166,44 +147,16 @@ export default function PdfMerge() {
   return (
     <div className="mx-auto w-full max-w-7xl space-y-6 p-6">
       {/* Upload */}
-      <input
-        id="merge-upload"
-        type="file"
-        accept="application/pdf"
+      <FileDropzone 
+        accept={PDF_FILES}
         multiple
-        hidden
-        onChange={(e) => {
-          addFiles(e.target.files)
-          e.target.value = "" // lets the user re-add the same file
-        }}
+        maxFiles={MAX_FILES - items.length}
+        onFiles={addFiles}
+        onError={setError}
+        disabled={busy}
+        buttonLabel={items.length > 0 ? "Add more PDFs" : "Choose PDFs"}
       />
-
-      <label
-        htmlFor="merge-upload"
-        onDragOver={(e) => {
-          if (dragId.current) return // an item is being reordered, not a file being uploaded
-          e.preventDefault()
-          setDragging(true)
-        }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={(e) => {
-          if (dragId.current) return
-          e.preventDefault()
-          setDragging(false)
-          addFiles(e.dataTransfer.files)
-        }}
-        className={`flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 border-dashed px-6 py-12 text-center transition ${
-          dragging ? "border-primary bg-secondary" : "border-border bg-card hover:border-primary/60"
-        }`}
-      >
-        <span className="rounded-xl bg-primary px-8 py-4 text-xl font-bold text-primary-foreground">
-          {items.length > 0 ? "Add more PDFs" : "Choose PDFs"}
-        </span>
-        <span className="text-sm text-muted-foreground">
-          or drop PDF files here (select several at once)
-        </span>
-      </label>
-
+      
       {/* File list */}
       {items.length > 0 && (
         <div className="space-y-3">

@@ -1,9 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
-"use client"
+"use client";
 
-import { useEffect, useRef, useState } from "react"
-import OptionCards from "@/components/OptionCards"
-import { safeFilename } from "@/services/merge"
+import FileDropzone from "../layout/FileDropzone";
+import { IMAGE_FILES } from "@/lib/files";
+import { formatBytes as fmt } from "@/lib/format";
+import { useEffect, useRef, useState } from "react";
+import OptionCards from "@/components/layout/OptionCards";
+import { safeFilename } from "@/services/merge";
 import {
   imagesToPdf,
   probeImage,
@@ -12,215 +15,204 @@ import {
   type PageSize,
   type QualityPreset,
   type Rotation,
-} from "@/services/image-to-pdf"
+} from "@/services/image-to-pdf";
 
-const MAX_IMAGES = 100
-const IMAGE_EXT = /\.(jpe?g|png|webp|gif|bmp|avif)$/i
+const MAX_IMAGES = 100;
 
 const PAGE_SIZES: { value: PageSize; title: string; desc: string }[] = [
   { value: "a4", title: "A4", desc: "210 × 297 mm" },
   { value: "letter", title: "US Letter", desc: "8.5 × 11 in" },
   { value: "fit", title: "Fit to image", desc: "Page matches each image" },
-]
+];
 
 const ORIENTATIONS: { value: Orientation; title: string; desc: string }[] = [
   { value: "auto", title: "Auto", desc: "Match each image" },
   { value: "portrait", title: "Portrait", desc: "Always upright pages" },
   { value: "landscape", title: "Landscape", desc: "Always wide pages" },
-]
+];
 
 const MARGINS: { value: MarginSize; title: string; desc: string }[] = [
   { value: "none", title: "No margin", desc: "Image fills the page" },
   { value: "small", title: "Small", desc: "0.25 in" },
   { value: "medium", title: "Medium", desc: "0.5 in" },
-]
+];
 
 const QUALITIES: { value: QualityPreset; title: string; desc: string }[] = [
   { value: "high", title: "High", desc: "Full size, largest file" },
   { value: "balanced", title: "Balanced", desc: "Good for sharing" },
   { value: "small", title: "Small", desc: "Smallest file" },
-]
+];
 
 type Item = {
-  id: string
-  file: File
-  url: string
-  rotation: Rotation
-  status: "loading" | "ready" | "error"
-  width?: number
-  height?: number
-}
-
-const fmt = (n: number) =>
-  n > 1_048_576 ? `${(n / 1_048_576).toFixed(2)} MB` : `${(n / 1024).toFixed(0)} KB`
-
-const isImage = (f: File) =>
-  (f.type.startsWith("image/") && !f.type.includes("svg")) || IMAGE_EXT.test(f.name)
+  id: string;
+  file: File;
+  url: string;
+  rotation: Rotation;
+  status: "loading" | "ready" | "error";
+  width?: number;
+  height?: number;
+};
 
 export default function ImageToPdf() {
-  const [items, setItems] = useState<Item[]>([])
-  const [dragging, setDragging] = useState(false) // files dragged in from the OS
-  const [overId, setOverId] = useState<string | null>(null) // reorder drop target
+  const [items, setItems] = useState<Item[]>([]);
+  const [overId, setOverId] = useState<string | null>(null); // reorder drop target
 
-  const [pageSize, setPageSize] = useState<PageSize>("a4")
-  const [orientation, setOrientation] = useState<Orientation>("auto")
-  const [margin, setMargin] = useState<MarginSize>("small")
-  const [quality, setQuality] = useState<QualityPreset>("balanced")
-  const [outName, setOutName] = useState("images")
+  const [pageSize, setPageSize] = useState<PageSize>("a4");
+  const [orientation, setOrientation] = useState<Orientation>("auto");
+  const [margin, setMargin] = useState<MarginSize>("small");
+  const [quality, setQuality] = useState<QualityPreset>("balanced");
+  const [outName, setOutName] = useState("images");
 
-  const [progress, setProgress] = useState(0)
-  const [busy, setBusy] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [progress, setProgress] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{
-    url: string
-    filename: string
-    size: number
-    pages: number
-  } | null>(null)
+    url: string;
+    filename: string;
+    size: number;
+    pages: number;
+  } | null>(null);
 
-  const dragId = useRef<string | null>(null) // set only while reordering the list
-  const nextId = useRef(0)
-  const urlsRef = useRef<Set<string>>(new Set()) // every object URL, so none leak
-  const abortRef = useRef<AbortController | null>(null)
+  const dragId = useRef<string | null>(null); // set only while reordering the list
+  const nextId = useRef(0);
+  const urlsRef = useRef<Set<string>>(new Set()); // every object URL, so none leak
+  const abortRef = useRef<AbortController | null>(null);
 
-  const ready = items.filter((i) => i.status === "ready")
-  const failed = items.filter((i) => i.status === "error")
-  const anyLoading = items.some((i) => i.status === "loading")
-  const totalSize = ready.reduce((sum, i) => sum + i.file.size, 0)
+  const ready = items.filter((i) => i.status === "ready");
+  const failed = items.filter((i) => i.status === "error");
+  const anyLoading = items.some((i) => i.status === "loading");
+  const totalSize = ready.reduce((sum, i) => sum + i.file.size, 0);
 
   // Revoke all object URLs and stop any running conversion when leaving the page
   useEffect(() => {
-    const urls = urlsRef.current
+    const urls = urlsRef.current;
     return () => {
-      urls.forEach((u) => URL.revokeObjectURL(u))
-      urls.clear()
+      urls.forEach((u) => URL.revokeObjectURL(u));
+      urls.clear();
       // eslint-disable-next-line react-hooks/exhaustive-deps
-      abortRef.current?.abort()
-    }
-  }, [])
+      abortRef.current?.abort();
+    };
+  }, []);
 
   function revoke(url: string) {
-    URL.revokeObjectURL(url)
-    urlsRef.current.delete(url)
+    URL.revokeObjectURL(url);
+    urlsRef.current.delete(url);
   }
 
   function clearResult() {
-    if (result) revoke(result.url)
-    setResult(null)
+    if (result) revoke(result.url);
+    setResult(null);
   }
 
   function patch(id: string, changes: Partial<Item>) {
-    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, ...changes } : i)))
+    setItems((prev) =>
+      prev.map((i) => (i.id === id ? { ...i, ...changes } : i)),
+    );
   }
 
-  async function addFiles(list: FileList | File[] | null) {
-    if (!list) return
-    const incoming = Array.from(list)
-    if (incoming.length === 0) return
-
-    const images = incoming.filter(isImage)
-    const skipped = incoming.length - images.length
-    const room = Math.max(0, MAX_IMAGES - items.length)
-    const accepted = images.slice(0, room)
-
-    const notes: string[] = []
-    if (skipped > 0) notes.push(`${skipped} non-image file(s) were ignored.`)
-    if (images.length > room) notes.push(`Limit is ${MAX_IMAGES} images, so some were not added.`)
-    setError(notes.length ? notes.join(" ") : null)
-
-    if (accepted.length === 0) return
-    clearResult()
+  async function addFiles(accepted: File[]) {
+    clearResult();
 
     const added: Item[] = accepted.map((file) => {
-      const url = URL.createObjectURL(file)
-      urlsRef.current.add(url)
-      return { id: String(nextId.current++), file, url, rotation: 0, status: "loading" }
-    })
-    setItems((prev) => [...prev, ...added])
+      const url = URL.createObjectURL(file);
+      urlsRef.current.add(url);
+      return {
+        id: String(nextId.current++),
+        file,
+        url,
+        rotation: 0,
+        status: "loading",
+      };
+    });
+    setItems((prev) => [...prev, ...added]);
 
-    // Check each image one at a time so many large photos don't freeze the page
     for (const item of added) {
       try {
-        const { width, height } = await probeImage(item.file)
-        patch(item.id, { status: "ready", width, height })
+        const { width, height } = await probeImage(item.file);
+        patch(item.id, { status: "ready", width, height });
       } catch {
-        patch(item.id, { status: "error" })
+        patch(item.id, { status: "error" });
       }
     }
   }
 
   function removeItem(id: string) {
-    clearResult()
-    const item = items.find((i) => i.id === id)
-    if (item) revoke(item.url)
-    setItems((prev) => prev.filter((i) => i.id !== id))
+    clearResult();
+    const item = items.find((i) => i.id === id);
+    if (item) revoke(item.url);
+    setItems((prev) => prev.filter((i) => i.id !== id));
   }
 
   function clearAll() {
-    clearResult()
-    items.forEach((i) => revoke(i.url))
-    setItems([])
-    setError(null)
+    clearResult();
+    items.forEach((i) => revoke(i.url));
+    setItems([]);
+    setError(null);
   }
 
   function rotate(id: string, delta: 90 | -90) {
-    clearResult()
+    clearResult();
     setItems((prev) =>
       prev.map((i) =>
-        i.id === id ? { ...i, rotation: ((i.rotation + delta + 360) % 360) as Rotation } : i
-      )
-    )
+        i.id === id
+          ? { ...i, rotation: ((i.rotation + delta + 360) % 360) as Rotation }
+          : i,
+      ),
+    );
   }
 
   function move(index: number, dir: -1 | 1) {
-    const target = index + dir
-    if (target < 0 || target >= items.length) return
-    clearResult()
+    const target = index + dir;
+    if (target < 0 || target >= items.length) return;
+    clearResult();
     setItems((prev) => {
-      const next = [...prev]
-      ;[next[index], next[target]] = [next[target], next[index]]
-      return next
-    })
+      const next = [...prev];
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
   }
 
   function reorder(fromId: string, toId: string) {
     setItems((prev) => {
-      const from = prev.findIndex((i) => i.id === fromId)
-      const to = prev.findIndex((i) => i.id === toId)
-      if (from < 0 || to < 0 || from === to) return prev
-      const next = [...prev]
-      const [moved] = next.splice(from, 1)
-      next.splice(to, 0, moved)
-      return next
-    })
+      const from = prev.findIndex((i) => i.id === fromId);
+      const to = prev.findIndex((i) => i.id === toId);
+      if (from < 0 || to < 0 || from === to) return prev;
+      const next = [...prev];
+      const [moved] = next.splice(from, 1);
+      next.splice(to, 0, moved);
+      return next;
+    });
   }
 
   function sortByName() {
-    clearResult()
+    clearResult();
     setItems((prev) =>
       [...prev].sort((a, b) =>
-        a.file.name.localeCompare(b.file.name, undefined, { numeric: true, sensitivity: "base" })
-      )
-    )
+        a.file.name.localeCompare(b.file.name, undefined, {
+          numeric: true,
+          sensitivity: "base",
+        }),
+      ),
+    );
   }
 
   function reverse() {
-    clearResult()
-    setItems((prev) => [...prev].reverse())
+    clearResult();
+    setItems((prev) => [...prev].reverse());
   }
 
   async function handleConvert() {
-    if (ready.length === 0) return
-    setBusy(true)
-    setError(null)
-    setProgress(0)
-    clearResult()
+    if (ready.length === 0) return;
+    setBusy(true);
+    setError(null);
+    setProgress(0);
+    clearResult();
 
-    const controller = new AbortController()
-    abortRef.current = controller
+    const controller = new AbortController();
+    abortRef.current = controller;
 
     try {
-      const filename = safeFilename(outName, "images")
+      const filename = safeFilename(outName, "images");
       const { blob, pages } = await imagesToPdf(
         ready.map((i) => ({ file: i.file, rotation: i.rotation })),
         {
@@ -230,65 +222,38 @@ export default function ImageToPdf() {
           quality,
           title: filename.replace(/\.pdf$/i, ""),
           signal: controller.signal,
-          onProgress: (done, total) => setProgress(Math.round((done / total) * 100)),
-        }
-      )
-      const url = URL.createObjectURL(blob)
-      urlsRef.current.add(url)
-      setResult({ url, filename, size: blob.size, pages })
+          onProgress: (done, total) =>
+            setProgress(Math.round((done / total) * 100)),
+        },
+      );
+      const url = URL.createObjectURL(blob);
+      urlsRef.current.add(url);
+      setResult({ url, filename, size: blob.size, pages });
     } catch (e) {
       if (e instanceof DOMException && e.name === "AbortError") {
-        setError("Conversion cancelled.")
+        setError("Conversion cancelled.");
       } else {
-        setError(e instanceof Error ? e.message : "Something went wrong")
+        setError(e instanceof Error ? e.message : "Something went wrong");
       }
     } finally {
-      setBusy(false)
-      abortRef.current = null
+      setBusy(false);
+      abortRef.current = null;
     }
   }
 
   return (
     <div className="mx-auto w-full max-w-7xl space-y-6 p-6">
       {/* Upload */}
-      <input
-        id="image-upload"
-        type="file"
-        accept="image/*"
+      <FileDropzone
+        accept={IMAGE_FILES}
         multiple
-        hidden
-        onChange={(e) => {
-          addFiles(e.target.files)
-          e.target.value = "" // lets the user re-add the same file
-        }}
+        maxFiles={MAX_IMAGES - items.length}
+        onFiles={addFiles}
+        onError={setError}
+        disabled={busy}
+        buttonLabel={items.length > 0 ? "Add more images" : "Choose images"}
+        hint="or drop JPG, PNG, WebP, GIF or BMP files here"
       />
-
-      <label
-        htmlFor="image-upload"
-        onDragOver={(e) => {
-          if (dragId.current) return // an item is being reordered, not a file being uploaded
-          if (!Array.from(e.dataTransfer.types).includes("Files")) return
-          e.preventDefault()
-          setDragging(true)
-        }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={(e) => {
-          if (dragId.current) return
-          e.preventDefault()
-          setDragging(false)
-          addFiles(e.dataTransfer.files)
-        }}
-        className={`flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 border-dashed px-6 py-12 text-center transition ${
-          dragging ? "border-primary bg-secondary" : "border-border bg-card hover:border-primary/60"
-        }`}
-      >
-        <span className="rounded-xl bg-primary px-8 py-4 text-xl font-bold text-primary-foreground">
-          {items.length > 0 ? "Add more images" : "Choose images"}
-        </span>
-        <span className="text-sm text-muted-foreground">
-          or drop JPG, PNG, WebP, GIF or BMP files here
-        </span>
-      </label>
 
       {/* Image list */}
       {items.length > 0 && (
@@ -297,12 +262,23 @@ export default function ImageToPdf() {
             <span className="mr-auto text-sm font-semibold text-foreground">
               {items.length} {items.length === 1 ? "image" : "images"}
               {ready.length > 0 && (
-                <span className="font-normal text-muted-foreground"> · {fmt(totalSize)}</span>
+                <span className="font-normal text-muted-foreground">
+                  {" "}
+                  · {fmt(totalSize)}
+                </span>
               )}
             </span>
             {[
-              { label: "Sort A–Z", onClick: sortByName, disabled: items.length < 2 },
-              { label: "Reverse", onClick: reverse, disabled: items.length < 2 },
+              {
+                label: "Sort A–Z",
+                onClick: sortByName,
+                disabled: items.length < 2,
+              },
+              {
+                label: "Reverse",
+                onClick: reverse,
+                disabled: items.length < 2,
+              },
               { label: "Clear all", onClick: clearAll, disabled: false },
             ].map((b) => (
               <button
@@ -322,26 +298,26 @@ export default function ImageToPdf() {
                 key={item.id}
                 draggable={!busy}
                 onDragStart={(e) => {
-                  dragId.current = item.id
-                  e.dataTransfer.effectAllowed = "move"
-                  e.dataTransfer.setData("text/plain", item.id) // Firefox needs this
+                  dragId.current = item.id;
+                  e.dataTransfer.effectAllowed = "move";
+                  e.dataTransfer.setData("text/plain", item.id); // Firefox needs this
                 }}
                 onDragOver={(e) => {
-                  if (!dragId.current) return
-                  e.preventDefault()
-                  setOverId(item.id)
+                  if (!dragId.current) return;
+                  e.preventDefault();
+                  setOverId(item.id);
                 }}
                 onDrop={(e) => {
-                  if (!dragId.current) return
-                  e.preventDefault()
-                  reorder(dragId.current, item.id)
-                  clearResult()
-                  dragId.current = null
-                  setOverId(null)
+                  if (!dragId.current) return;
+                  e.preventDefault();
+                  reorder(dragId.current, item.id);
+                  clearResult();
+                  dragId.current = null;
+                  setOverId(null);
                 }}
                 onDragEnd={() => {
-                  dragId.current = null
-                  setOverId(null)
+                  dragId.current = null;
+                  setOverId(null);
                 }}
                 className={`flex items-center gap-3 rounded-xl border bg-card p-3 transition ${
                   overId === item.id && dragId.current !== item.id
@@ -349,7 +325,9 @@ export default function ImageToPdf() {
                     : "border-border"
                 } ${busy ? "" : "cursor-grab active:cursor-grabbing"}`}
               >
-                <span aria-hidden className="select-none text-muted-foreground">⋮⋮</span>
+                <span aria-hidden className="select-none text-muted-foreground">
+                  ⋮⋮
+                </span>
                 <span className="w-6 text-center text-sm font-semibold text-muted-foreground">
                   {i + 1}
                 </span>
@@ -369,17 +347,24 @@ export default function ImageToPdf() {
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-semibold text-foreground">{item.file.name}</p>
+                  <p className="truncate font-semibold text-foreground">
+                    {item.file.name}
+                  </p>
                   {item.status === "error" ? (
                     <p className="text-sm text-red-600">
-                      Can&apos;t read this image. Formats like HEIC aren&apos;t supported by most
-                      browsers, so convert it to JPG or PNG first. It will be skipped.
+                      Can&apos;t read this image. Formats like HEIC aren&apos;t
+                      supported by most browsers, so convert it to JPG or PNG
+                      first. It will be skipped.
                     </p>
                   ) : (
                     <p className="text-sm text-muted-foreground">
                       {fmt(item.file.size)}
-                      {item.width && item.height ? ` · ${item.width}×${item.height}` : ""}
-                      {item.rotation !== 0 ? ` · rotated ${item.rotation}°` : ""}
+                      {item.width && item.height
+                        ? ` · ${item.width}×${item.height}`
+                        : ""}
+                      {item.rotation !== 0
+                        ? ` · rotated ${item.rotation}°`
+                        : ""}
                     </p>
                   )}
                 </div>
@@ -431,7 +416,8 @@ export default function ImageToPdf() {
           </ul>
 
           <p className="text-sm text-muted-foreground">
-            Drag images to reorder, or use the arrows. Each image becomes one page, in this order.
+            Drag images to reorder, or use the arrows. Each image becomes one
+            page, in this order.
           </p>
         </div>
       )}
@@ -444,7 +430,10 @@ export default function ImageToPdf() {
             name="pdf-page-size"
             options={PAGE_SIZES}
             value={pageSize}
-            onChange={(v) => { clearResult(); setPageSize(v) }}
+            onChange={(v) => {
+              clearResult();
+              setPageSize(v);
+            }}
             disabled={busy}
           />
 
@@ -453,9 +442,16 @@ export default function ImageToPdf() {
             name="pdf-orientation"
             options={ORIENTATIONS}
             value={orientation}
-            onChange={(v) => { clearResult(); setOrientation(v) }}
+            onChange={(v) => {
+              clearResult();
+              setOrientation(v);
+            }}
             disabled={busy || pageSize === "fit"}
-            hint={pageSize === "fit" ? "Not needed: each page already matches its image." : undefined}
+            hint={
+              pageSize === "fit"
+                ? "Not needed: each page already matches its image."
+                : undefined
+            }
           />
 
           <OptionCards
@@ -463,7 +459,10 @@ export default function ImageToPdf() {
             name="pdf-margin"
             options={MARGINS}
             value={margin}
-            onChange={(v) => { clearResult(); setMargin(v) }}
+            onChange={(v) => {
+              clearResult();
+              setMargin(v);
+            }}
             disabled={busy}
           />
 
@@ -472,13 +471,19 @@ export default function ImageToPdf() {
             name="pdf-quality"
             options={QUALITIES}
             value={quality}
-            onChange={(v) => { clearResult(); setQuality(v) }}
+            onChange={(v) => {
+              clearResult();
+              setQuality(v);
+            }}
             disabled={busy}
             hint="Large photos are scaled down on Balanced and Small to keep the PDF light."
           />
 
           <div className="space-y-2">
-            <label htmlFor="pdf-out-name" className="block text-sm font-semibold text-foreground">
+            <label
+              htmlFor="pdf-out-name"
+              className="block text-sm font-semibold text-foreground"
+            >
               Output file name
             </label>
             <div className="flex items-center gap-2">
@@ -533,8 +538,9 @@ export default function ImageToPdf() {
 
             {!busy && failed.length > 0 && (
               <p className="text-center text-sm text-red-600">
-                {failed.length} unreadable {failed.length === 1 ? "image" : "images"} will be left
-                out of the PDF.
+                {failed.length} unreadable{" "}
+                {failed.length === 1 ? "image" : "images"} will be left out of
+                the PDF.
               </p>
             )}
           </div>
@@ -560,5 +566,5 @@ export default function ImageToPdf() {
         </div>
       )}
     </div>
-  )
+  );
 }

@@ -1,10 +1,11 @@
 "use client"
 
+import FileDropzone from "../layout/FileDropzone"
+import { PDF_FILES } from "@/lib/files"
+import { formatBytes as fmt } from "@/lib/format"
 import { useState, useEffect } from "react"
 import { compressPdf, type Preset } from "@/services/compress"
 import { renderFirstPage } from "@/services/preview" 
-
-const fmt = (n: number) => n > 1_048_576 ? `${(n / 1_048_576).toFixed(2)} MB` : `${(n / 1024).toFixed(0)} KB`
 
 const PRESET_OPTIONS: { value: Preset; title: string; desc: string }[] = [
   { value: "light", title: "Light", desc: "Best quality, bigger file" },
@@ -20,7 +21,6 @@ export default function PdfCompressor() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{ url: string; before: number; after: number } | null>(null);
   const [preview, setPreview] = useState<{ thumb: string; pages: number } | null >(null);
-  const [dragging, setDragging] = useState(false);
 
   async function handleCompress() {
     if (!file) return;
@@ -54,50 +54,24 @@ export default function PdfCompressor() {
     return () => { cancelled = true; };
   }, [file]);
 
-  function pick(f: File | null) {
-    if (!f) return;
-    if (f.type !== "application/pdf") {
-      setError("Please choose a PDF file.");
-      return;
-    }
+  function pick(files: File[] | null) {
+    if (!files) return;
     setError(null);
     if (result) URL.revokeObjectURL(result.url);
     setResult(null);
-    setFile(f);
+    setFile(files[0]);
   }
 
   return (
     <div className="mx-auto w-full max-w-7xl space-y-6 p-6">
       <div className="space-y-4">
-        <input
-          id="file-upload"
-          type="file"
-          accept="application/pdf"
-          hidden
-          onChange={(e) => {
-            pick(e.target.files?.[0] ?? null);
-            e.target.value = "";
-          }}
+        <FileDropzone 
+          accept={PDF_FILES}
+          onFiles={pick}
+          onError={setError}
+          disabled={busy}
+          buttonLabel={file ? "Choose another PDF": "Choose PDF"}
         />
-
-        <label
-          htmlFor="file-upload"
-          onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
-          onDragLeave={() => setDragging(false)}
-          onDrop={(e) => {
-            e.preventDefault();
-            setDragging(false);
-            pick(e.dataTransfer.files?.[0] ?? null);
-          }}
-          className={`flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 border-dashed px-6 py-12 text-center transition ${
-            dragging ? "border-primary bg-secondary" : "border-border bg-card hover:border-primary/60"
-          }`}
-        >
-          <span className="rounded-xl bg-primary px-8 py-4 text-xl font-bold text-primary-foreground">
-            {file ? "Choose another PDF" : "Choose PDF"}
-          </span>
-          <span className="text-sm text-muted-foreground">or drop a PDF here</span>
-        </label>
 
         {file && (
           <div className="flex items-center gap-4 rounded-xl border border-border bg-card p-4">

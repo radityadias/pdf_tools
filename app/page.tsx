@@ -1,4 +1,4 @@
-import Hero from "@/components/Hero";
+import Hero from "@/components/layout/Hero";
 import Link from "next/link";
 import JsonLd from "@/components/JsonLd";
 import { Metadata } from "next";
@@ -8,7 +8,9 @@ import { SITE } from "@/lib/site";
 import { websiteJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: { absolute: `Free PDF Tools: Compress, Merge & Split Online | ${SITE.name}` },
+  title: {
+    absolute: `Free PDF Tools: Compress, Merge & Split Online | ${SITE.name}`,
+  },
   description: SITE.description,
   alternates: { canonical: "/" },
 };

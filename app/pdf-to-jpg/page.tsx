@@ -1,5 +1,5 @@
-import Hero from "@/components/Hero";
-import PdfToImage from "@/components/PdfToImage";
+import Hero from "@/components/layout/Hero";
+import PdfToImage from "@/components/page/PdfToImage";
 import JsonLd from "@/components/JsonLd";
 import { toolJsonLd, toolMetadata } from "@/lib/seo";
 

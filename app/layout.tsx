@@ -2,17 +2,17 @@ import type { Metadata, Viewport } from "next";
 import { Roboto, Raleway } from "next/font/google";
 import { SITE } from "@/lib/site";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/layout/Navbar";
 
 const roboto = Roboto({
   variable: "--font-sans-serif",
-  subsets: ["latin"]
-})
+  subsets: ["latin"],
+});
 
 const raleway = Raleway({
   variable: "--font-sans-serif",
-  subsets: ['latin']
-})
+  subsets: ["latin"],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: "#3b5ea3",
-}
+};
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -52,7 +52,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${roboto.variable} ${raleway.variable} h-full antialiased`}
     >
       <head>
-        <meta name="google-adsense-account" content="ca-pub-2231908252676475"></meta>
+        <meta
+          name="google-adsense-account"
+          content="ca-pub-2231908252676475"
+        ></meta>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
       <body className="min-h-full flex flex-col items-center">

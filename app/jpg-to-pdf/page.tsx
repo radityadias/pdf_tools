@@ -1,6 +1,6 @@
-import ImageToPdf from "@/components/ImageToPdf";
+import ImageToPdf from "@/components/page/ImageToPdf";
 import JsonLd from "@/components/JsonLd";
-import Hero from "@/components/Hero";
+import Hero from "@/components/layout/Hero";
 import { toolJsonLd, toolMetadata } from "@/lib/seo";
 
 export const metadata = toolMetadata("jpg-to-pdf");
