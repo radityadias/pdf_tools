@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Menu, X } from 'lucide-react'
-import { NAVBAR_LINKS } from "@/lib/nav"
+import { Menu, X, ChevronDown } from 'lucide-react'
+import { NAVBAR_LINKS, TOOL_LINKS } from "@/lib/nav"
 
 export default function Navbar() {
     const [isActive, setIsActive] = useState(false)
@@ -33,6 +33,26 @@ export default function Navbar() {
                     </p>
                 </a>
                 ))}
+                
+                <div className="relative group text-foreground">
+                    <button className="flex gap-1 text-md font-bold hover:text-primary">
+                        CONVERT PDF
+                        <ChevronDown />
+                    </button>
+                    <div className="absolute hidden z-10 w-xs group-hover:block m-0 left-1/2 -translate-x-1/2">
+                        <div className="mt-7 bg-card border border-gray-200 rounded-xl p-4 grid grid-cols-1 gap-2 font-bold">
+                            {NAVBAR_LINKS.map((link) => (
+                                <a 
+                                    key={link.label}
+                                    href={link.href}
+                                    className="text-sm hover:text-primary"
+                                >   
+                                    {link.label}
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {/* Desktop Call-to-Action Button */}

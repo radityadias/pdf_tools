@@ -14,6 +14,9 @@ export const NAVBAR_LINKS: NavLink[] = [
   { href: "/compress-pdf", label: "COMPRESS PDF" },
   { href: "/merge-pdf", label: "MERGE PDF" },
   { href: "/split-pdf", label: "SPLIT PDF" },
+]
+
+export const TOOL_LINKS: NavLink[] = [
   { href: "/jpg-to-pdf", label: "IMAGE TO PDF" },
   { href: "/pdf-to-jpg", label: "PDF TO IMAGE" },
 ]
