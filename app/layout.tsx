@@ -1,8 +1,14 @@
-import type { Metadata, Viewport } from "next";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+
+import type { 
+  Metadata, 
+  Viewport 
+} from "next";
 import { Roboto, Raleway } from "next/font/google";
 import { SITE } from "@/lib/site";
+
 import "./globals.css";
-import Navbar from "@/components/layout/Navbar";
 
 const roboto = Roboto({
   variable: "--font-sans-serif",
@@ -61,6 +67,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col items-center">
         <Navbar />
         {children}
+        <Footer />
       </body>
     </html>
   );
