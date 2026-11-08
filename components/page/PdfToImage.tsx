@@ -1,6 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
 
+import FileCard from "../layout/FileCard"
+import FileDropzone from "../layout/FileDropzone"
+
+import { PDF_FILES } from "@/lib/files"
+import { formatBytes as fmt } from "@/lib/format"
+import { usePdfDocument } from "@/hooks/usePdfDocument"
 import { useEffect, useMemo, useRef, useState } from "react"
 import {
   MAX_PAGES_PER_RUN,
@@ -10,7 +16,7 @@ import {
   type RenderedPage,
 } from "@/services/pdf-to-image"
 import { parseRanges } from "@/services/split"
-import { loadPdfThumbnails, MAX_THUMBS } from "@/services/thumbnails"
+import { MAX_THUMBS } from "@/services/thumbnails"
 
 type Mode = "all" | "range" | "select"
 
@@ -31,9 +37,6 @@ const RESOLUTIONS: { value: number; title: string; desc: string }[] = [
   { value: 150, title: "150 DPI", desc: "Good for most uses" },
   { value: 300, title: "300 DPI", desc: "Print quality" },
 ]
-
-const fmt = (n: number) =>
-  n > 1_048_576 ? `${(n / 1_048_576).toFixed(2)} MB` : `${(n / 1024).toFixed(0)} KB`
 
 function saveUrl(url: string, filename: string) {
   const a = document.createElement("a")
@@ -95,9 +98,6 @@ function OptionCards<T extends string | number>({
 
 export default function PdfToImage() {
   const [file, setFile] = useState<File | null>(null)
-  const [totalPages, setTotalPages] = useState(0)
-  const [thumbs, setThumbs] = useState<(string | undefined)[]>([])
-  const [dragging, setDragging] = useState(false)
 
   const [mode, setMode] = useState<Mode>("all")
   const [rangeInput, setRangeInput] = useState("")
@@ -127,28 +127,13 @@ export default function PdfToImage() {
     }
   }, [])
 
-  // Load page count + thumbnails whenever a new file is picked
-  useEffect(() => {
-    if (!file) return
-
-    const controller = new AbortController()
-    loadPdfThumbnails(file, {
-      signal: controller.signal,
-      onMeta: (n) => setTotalPages(n),
-      onThumb: (i, url) =>
-        setThumbs((prev) => {
-          const next = prev.slice()
-          next[i] = url
-          return next
-        }),
-    }).catch(() => {
-      if (controller.signal.aborted) return
-      setError("Could not read this PDF. It may be password-protected or damaged.")
+  const { totalPages, thumbs } = usePdfDocument(file, {
+    onError: (message) => {
+      resetDocument()
+      setError(message)
       setFile(null)
-    })
-
-    return () => controller.abort()
-  }, [file])
+    },
+  })
 
   function clearResults() {
     urlsRef.current.forEach((u) => URL.revokeObjectURL(u))
@@ -159,20 +144,14 @@ export default function PdfToImage() {
 
   function resetDocument() {
     clearResults()
-    setTotalPages(0)
-    setThumbs([])
     setSelected(new Set())
   }
 
-  function pick(f: File | null) {
-    if (!f) return
-    if (f.type !== "application/pdf") {
-      setError("Please choose a PDF file.")
-      return
-    }
+  function pick(files: File[] | null) {
+    if (!files) return
     setError(null)
     resetDocument()
-    setFile(f)
+    setFile(files[0])
   }
 
   function removeFile() {
@@ -290,62 +269,21 @@ export default function PdfToImage() {
   return (
     <div className="mx-auto w-full max-w-7xl space-y-6 p-6">
       {/* Upload */}
-      <input
-        id="img-upload"
-        type="file"
-        accept="application/pdf"
-        hidden
-        onChange={(e) => {
-          pick(e.target.files?.[0] ?? null)
-          e.target.value = ""
-        }}
+      <FileDropzone
+        accept={PDF_FILES}
+        onFiles={pick}
+        onError={setError}
+        disabled={busy}
+        buttonLabel={file ? "Choose another PDF" : "Choose PDF"}
       />
 
-      <label
-        htmlFor="img-upload"
-        onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={(e) => {
-          e.preventDefault()
-          setDragging(false)
-          pick(e.dataTransfer.files?.[0] ?? null)
-        }}
-        className={`flex cursor-pointer flex-col items-center gap-3 rounded-2xl border-2 border-dashed px-6 py-12 text-center transition ${
-          dragging ? "border-primary bg-secondary" : "border-border bg-card hover:border-primary/60"
-        }`}
-      >
-        <span className="rounded-xl bg-primary px-8 py-4 text-xl font-bold text-primary-foreground">
-          {file ? "Choose another PDF" : "Choose PDF"}
-        </span>
-        <span className="text-sm text-muted-foreground">or drop a PDF here</span>
-      </label>
-
       {file && (
-        <div className="flex items-center gap-4 rounded-xl border border-border bg-card p-4">
-          {thumbs[0] ? (
-            <img
-              src={thumbs[0]}
-              alt="First page preview"
-              className="h-24 w-auto rounded border border-border shadow-sm"
-            />
-          ) : (
-            <div className="h-24 w-[68px] shrink-0 animate-pulse rounded bg-secondary" />
-          )}
-          <div className="min-w-0 flex-1">
-            <p className="truncate font-semibold text-foreground">{file.name}</p>
-            <p className="text-sm text-muted-foreground">
-              {fmt(file.size)}
-              {totalPages > 0 && ` · ${totalPages} ${totalPages === 1 ? "page" : "pages"}`}
-            </p>
-          </div>
-          <button
-            onClick={removeFile}
-            aria-label="Remove file"
-            className="rounded-lg px-3 py-2 text-muted-foreground transition hover:bg-secondary hover:text-foreground"
-          >
-            ✕
-          </button>
-        </div>
+        <FileCard
+          file={file}
+          thumbnail={thumbs[0]}
+          pages={totalPages || undefined}
+          onRemove={removeFile}
+        />
       )}
 
       {file && totalPages > 0 && (

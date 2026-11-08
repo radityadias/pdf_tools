@@ -2,13 +2,15 @@ export const MAX_THUMBS = 150;
 
 type Options = {
   maxWidth?: number;
+  /** How many pages to render (capped at MAX_THUMBS). Default: MAX_THUMBS */
+  limit?: number;
   signal?: AbortSignal;
   onMeta: (totalPages: number) => void;
   onThumb: (index: number, dataUrl: string) => void;
 };
 
 export async function loadPdfThumbnails(file: File, opts: Options): Promise<void> {
-  const { maxWidth = 140, signal, onMeta, onThumb } = opts;
+  const { maxWidth = 140, limit = MAX_THUMBS, signal, onMeta, onThumb } = opts;
 
   const pdfjs = await import("pdfjs-dist");
   pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
@@ -20,8 +22,8 @@ export async function loadPdfThumbnails(file: File, opts: Options): Promise<void
     if (signal?.aborted) return;
     onMeta(pdf.numPages);
 
-    const limit = Math.min(pdf.numPages, MAX_THUMBS);
-    for (let i = 1; i <= limit; i++) {
+    const count = Math.min(pdf.numPages, limit, MAX_THUMBS);
+    for (let i = 1; i <= count; i++) {
       if (signal?.aborted) return;
 
       const page = await pdf.getPage(i);

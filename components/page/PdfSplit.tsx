@@ -2,11 +2,14 @@
 "use client"
 
 import FileDropzone from "../layout/FileDropzone"
+import FileCard from "../layout/FileCard"
+
+import { usePdfDocument } from "@/hooks/usePdfDocument"
 import { PDF_FILES } from "@/lib/files"
 import { formatBytes as fmt } from "@/lib/format"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { chunkPages, packFiles, parseRanges, splitPdf, type PageGroup } from "@/services/split"
-import { loadPdfThumbnails, MAX_THUMBS } from "@/services/thumbnails"
+import { MAX_THUMBS } from "@/services/thumbnails"
 
 type Mode = "ranges" | "fixed" | "select"
 
@@ -18,8 +21,6 @@ const MODES: { value: Mode; title: string; desc: string }[] = [
 
 export default function PdfSplit() {
   const [file, setFile] = useState<File | null>(null)
-  const [totalPages, setTotalPages] = useState(0)
-  const [thumbs, setThumbs] = useState<(string | undefined)[]>([])
   const [dragging, setDragging] = useState(false)
 
   const [mode, setMode] = useState<Mode>("ranges")
@@ -38,28 +39,13 @@ export default function PdfSplit() {
     count: number
   } | null>(null)
 
-  // Load page count + thumbnails whenever a new file is picked
-  useEffect(() => {
-    if (!file) return
-
-    const controller = new AbortController()
-    loadPdfThumbnails(file, {
-      signal: controller.signal,
-      onMeta: (n) => setTotalPages(n),
-      onThumb: (i, url) =>
-        setThumbs((prev) => {
-          const next = prev.slice()
-          next[i] = url
-          return next
-        }),
-    }).catch(() => {
-      if (controller.signal.aborted) return
-      setError("Could not read this PDF. It may be password-protected or damaged.")
+  const { totalPages, thumbs } = usePdfDocument(file, {
+    onError: (message) => {
+      resetDocument()
+      setError(message)
       setFile(null)
-    })
-
-    return () => controller.abort()
-  }, [file])
+    },
+  })
 
   function clearResult() {
     if (result) URL.revokeObjectURL(result.url)
@@ -68,8 +54,6 @@ export default function PdfSplit() {
 
   function resetDocument() {
     clearResult()
-    setTotalPages(0)
-    setThumbs([])
     setSelected(new Set())
   }
 
@@ -173,32 +157,13 @@ export default function PdfSplit() {
       />
 
       {file && (
-        <div className="flex items-center gap-4 rounded-xl border border-border bg-card p-4">
-          {thumbs[0] ? (
-            <img
-              src={thumbs[0]}
-              alt="First page preview"
-              className="h-24 w-auto rounded border border-border shadow-sm"
-            />
-          ) : (
-            <div className="h-24 w-[68px] shrink-0 animate-pulse rounded bg-secondary" />
-          )}
-          <div className="min-w-0 flex-1">
-            <p className="truncate font-semibold text-foreground">{file.name}</p>
-            <p className="text-sm text-muted-foreground">
-              {fmt(file.size)}
-              {totalPages > 0 && ` · ${totalPages} ${totalPages === 1 ? "page" : "pages"}`}
-            </p>
-          </div>
-          <button
-            onClick={removeFile}
-            disabled={busy}
-            aria-label="Remove file"
-            className="rounded-lg px-3 py-2 text-muted-foreground transition hover:bg-secondary hover:text-foreground disabled:opacity-50"
-          >
-            ✕
-          </button>
-        </div>
+        <FileCard
+          file={file}
+          thumbnail={thumbs[0]}
+          pages={totalPages || undefined}
+          disabled={busy}
+          onRemove={removeFile}
+        />
       )}
 
       {file && totalPages > 0 && (

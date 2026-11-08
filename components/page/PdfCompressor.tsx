@@ -1,11 +1,13 @@
 "use client"
 
 import FileDropzone from "../layout/FileDropzone"
+import FileCard from "../layout/FileCard"
+
+import { usePdfDocument } from "@/hooks/usePdfDocument"
 import { PDF_FILES } from "@/lib/files"
 import { formatBytes as fmt } from "@/lib/format"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { compressPdf, type Preset } from "@/services/compress"
-import { renderFirstPage } from "@/services/preview" 
 
 const PRESET_OPTIONS: { value: Preset; title: string; desc: string }[] = [
   { value: "light", title: "Light", desc: "Best quality, bigger file" },
@@ -20,7 +22,14 @@ export default function PdfCompressor() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{ url: string; before: number; after: number } | null>(null);
-  const [preview, setPreview] = useState<{ thumb: string; pages: number } | null >(null);
+
+  const { totalPages, thumbs } = usePdfDocument(file, {
+    limit: 1, 
+    onError: (message) => {
+      setError(message)
+      setFile(null)
+    },
+  })
 
   async function handleCompress() {
     if (!file) return;
@@ -42,24 +51,16 @@ export default function PdfCompressor() {
     }
   }
 
-  useEffect(() => {
-    setPreview(null);
-    if (!file) return;
+  function pick(files: File[]) {
+    if (result) URL.revokeObjectURL(result.url)
+    setResult(null)
+    setFile(files[0])
+  }
 
-    let cancelled = false;
-    renderFirstPage(file)
-      .then((p) => { if (!cancelled) setPreview(p); })
-      .catch(() => {}); // e.g. password-protected PDF: we just skip the thumbnail
-
-    return () => { cancelled = true; };
-  }, [file]);
-
-  function pick(files: File[] | null) {
-    if (!files) return;
-    setError(null);
-    if (result) URL.revokeObjectURL(result.url);
-    setResult(null);
-    setFile(files[0]);
+  function removeFile() {
+    if (result) URL.revokeObjectURL(result.url)
+    setResult(null)
+    setFile(null)
   }
 
   return (
@@ -74,38 +75,17 @@ export default function PdfCompressor() {
         />
 
         {file && (
-          <div className="flex items-center gap-4 rounded-xl border border-border bg-card p-4">
-            {preview ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={preview.thumb}
-                alt="First page preview"
-                className="h-24 w-auto rounded border border-border shadow-sm"
-              />
-            ) : (
-              <div className="h-24 w-[68px] shrink-0 animate-pulse rounded bg-secondary" />
-            )}
-
-            <div className="min-w-0 flex-1">
-              <p className="truncate font-semibold text-foreground">{file.name}</p>
-              <p className="text-sm text-muted-foreground">
-                {fmt(file.size)}
-                {preview && ` · ${preview.pages} ${preview.pages === 1 ? "page" : "pages"}`}
-              </p>
-            </div>
-
-            <button
-              onClick={() => setFile(null)}
-              disabled={busy}
-              aria-label="Remove file"
-              className="rounded-lg px-3 py-2 text-muted-foreground transition hover:bg-secondary hover:text-foreground disabled:opacity-50"
-            >
-              ✕
-            </button>
-          </div>
+          <FileCard
+            file={file}
+            thumbnail={thumbs[0]}
+            pages={totalPages || undefined}
+            disabled={busy}
+            onRemove={removeFile}
+          />
         )}
+        
       </div>
-
+    
       <fieldset>
         <legend className="mb-3 text-sm font-semibold text-foreground">
           Compression level
