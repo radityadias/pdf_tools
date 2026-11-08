@@ -2,16 +2,10 @@
 
 import { useState } from "react"
 import { Menu, X } from 'lucide-react'
+import { NAVBAR_LINKS } from "@/lib/nav"
 
 export default function Navbar() {
     const [isActive, setIsActive] = useState(false)
-    const navLinks = [
-        {name: "COMPRESS PDF", href: "/compress-pdf"},
-        {name: "MERGE PDF", href: "/merge-pdf"},
-        {name: "SPLIT PDF", href: "/split-pdf"},
-        {name: "PDF TO JPG", href: "/pdf-to-jpg"},
-        {name: "JPG TO IMG", href: "/jpg-to-pdf"},
-    ]
 
     return (
         <nav className="fixed top-0 left-0 w-full bg-card border-b border-gray-200 z-50">
@@ -28,14 +22,14 @@ export default function Navbar() {
 
             {/* Desktop Navigation Links */}
             <div className="hidden md:flex space-x-12">
-                {navLinks.map((link) => (
+                {NAVBAR_LINKS.map((link) => (
                 <a
-                    key={link.name}
+                    key={link.label}
                     href={link.href}
                     className="text-foreground hover:text-primary font-bold transition-colors duration-200"
                 >
-                    <p className="text-md! md:text-md! lg:text-xl!">
-                        {link.name}
+                    <p className="text-md! md:text-md! lg:text-md!">
+                        {link.label}
                     </p>
                 </a>
                 ))}
@@ -68,14 +62,14 @@ export default function Navbar() {
             }`}
         >
             <div className="px-4 pt-2 pb-4 space-y-2 shadow-lg">
-            {navLinks.map((link) => (
+            {NAVBAR_LINKS.map((link) => (
                 <a
-                key={link.name}
+                key={link.label}
                 href={link.href}
-                className="block text-primary active:text-primary font-medium py-2 rounded-md"
+                className="block text-black active:text-primary font-medium py-2 rounded-md"
                 onClick={() => setIsActive(false)}
                 >
-                {link.name}
+                {link.label}
                 </a>
             ))}
             <div className="pt-4 border-t border-gray-100">
