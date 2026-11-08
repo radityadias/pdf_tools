@@ -3,6 +3,8 @@
 
 import FileDropzone from "../layout/FileDropzone"
 import FileCard from "../layout/FileCard"
+import ActionButton from "../layout/ActionButton"
+import ResultCard from "../layout/ResultCard"
 
 import { usePdfDocument } from "@/hooks/usePdfDocument"
 import { PDF_FILES } from "@/lib/files"
@@ -331,54 +333,39 @@ export default function PdfSplit() {
           {plan.error && <p className="text-red-600">{plan.error}</p>}
 
           {/* Action */}
-          <div className="space-y-2">
-            <button
-              onClick={handleSplit}
-              disabled={!plan.groups || busy}
-              className="w-full rounded-xl bg-primary px-6 py-4 text-lg font-bold text-primary-foreground shadow-sm transition
-                         hover:bg-primary-hover active:scale-[0.99]
-                         focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/30
-                         disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {busy ? `Splitting… ${progress}%` : "Split PDF"}
-            </button>
-
+          <ActionButton
+            label="Split PDF"
+            busyLabel="Splitting…"
+            busy={busy}
+            progress={progress}
+            disabled={!plan.groups}
+            onClick={handleSplit}
+          >
             {plan.groups && !busy && (
               <p className="text-center text-sm text-muted-foreground">
                 This will create {plan.groups.length}{" "}
                 {plan.groups.length === 1 ? "PDF" : "PDFs (downloaded as a ZIP)"}.
               </p>
             )}
-
-            {busy && (
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
-                <div
-                  className="h-full rounded-full bg-accent transition-all"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-            )}
-          </div>
+          </ActionButton>
         </>
       )}
 
       {error && <p className="text-red-600">{error}</p>}
 
       {result && (
-        <div className="space-y-4 rounded-xl border border-border bg-card p-5 text-center">
-          <p className="text-foreground">
-            Created <span className="font-bold">{result.count}</span>{" "}
-            {result.count === 1 ? "PDF" : "PDFs"}{" "}
-            <span className="text-muted-foreground">({fmt(result.size)})</span>
-          </p>
-          <a
-            href={result.url}
-            download={result.filename}
-            className="inline-block rounded-xl bg-accent px-6 py-3 font-bold text-accent-foreground transition hover:brightness-95"
-          >
-            {result.count > 1 ? "Download ZIP" : "Download PDF"}
-          </a>
-        </div>
+        <ResultCard
+          action={{
+            type: "link",
+            href: result.url,
+            filename: result.filename,
+            label: result.count > 1 ? "Download ZIP" : "Download PDF",
+          }}
+        >
+          Created <span className="font-bold">{result.count}</span>{" "}
+          {result.count === 1 ? "PDF" : "PDFs"}{" "}
+          <span className="text-muted-foreground">({fmt(result.size)})</span>
+        </ResultCard>
       )}
     </div>
   )

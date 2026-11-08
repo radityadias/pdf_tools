@@ -2,6 +2,8 @@
 
 import FileDropzone from "../layout/FileDropzone"
 import FileCard from "../layout/FileCard"
+import ActionButton from "../layout/ActionButton"
+import ResultCard from "../layout/ResultCard"
 
 import { usePdfDocument } from "@/hooks/usePdfDocument"
 import { PDF_FILES } from "@/lib/files"
@@ -117,46 +119,31 @@ export default function PdfCompressor() {
         </div>
       </fieldset>
 
-      <div className="space-y-2">
-        <button
-          onClick={handleCompress}
-          disabled={!file || busy}
-          className="w-full rounded-xl bg-primary px-6 py-4 text-lg font-bold text-primary-foreground shadow-sm transition
-                     hover:bg-primary-hover active:scale-[0.99]
-                     focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/30
-                     disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {busy ? `Compressing… ${progress}%` : "Compress PDF"}
-        </button>
-
-        {busy && (
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
-            <div
-              className="h-full rounded-full bg-accent transition-all"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        )}
-      </div>
+      <ActionButton 
+        label="Compress PDF"
+        busyLabel="Compressing..."
+        busy={busy}
+        progress={progress}
+        disabled={!file}
+        onClick={handleCompress}
+      />
 
       {error && <p className="text-red-600">{error}</p>}
 
       {result && (
-        <div className="space-y-4 rounded-xl border border-border bg-card p-5 text-center">
-          <p className="text-foreground">
-            {fmt(result.before)} → <span className="font-bold">{fmt(result.after)}</span>{" "}
-            <span className="text-muted-foreground">
-              ({Math.round((1 - result.after / result.before) * 100)}% smaller)
-            </span>
-          </p>
-          <a
-            href={result.url}
-            download={`compressed-${file?.name ?? "file.pdf"}`}
-            className="inline-block rounded-xl bg-accent px-6 py-3 font-bold text-accent-foreground transition hover:brightness-95"
-          >
-            Download
-          </a>
-        </div>
+        <ResultCard
+          action={{
+            type: "link",
+            href: result.url,
+            filename: `compressed-${file?.name ?? "file.pdf"}`,
+            label: "Download",
+          }}
+        >
+          {fmt(result.before)} → <span className="font-bold">{fmt(result.after)}</span>{" "}
+          <span className="text-muted-foreground">
+            ({Math.round((1 - result.after / result.before) * 100)}% smaller)
+          </span>
+        </ResultCard>
       )}
     </div>
   );

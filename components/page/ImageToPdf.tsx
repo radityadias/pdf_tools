@@ -2,10 +2,13 @@
 "use client";
 
 import FileDropzone from "../layout/FileDropzone";
+import ActionButton from "../layout/ActionButton";
+import ResultCard from "../layout/ResultCard";
+import OptionCards from "../layout/OptionCards";
+
 import { IMAGE_FILES } from "@/lib/files";
 import { formatBytes as fmt } from "@/lib/format";
 import { useEffect, useRef, useState } from "react";
-import OptionCards from "@/components/layout/OptionCards";
 import { safeFilename } from "@/services/merge";
 import {
   imagesToPdf,
@@ -500,42 +503,19 @@ export default function ImageToPdf() {
           </div>
 
           {/* Action */}
-          <div className="space-y-2">
-            <div className="flex gap-3">
-              <button
-                onClick={handleConvert}
-                disabled={ready.length === 0 || busy || anyLoading}
-                className="w-full rounded-xl bg-primary px-6 py-4 text-lg font-bold text-primary-foreground shadow-sm transition
-                           hover:bg-primary-hover active:scale-[0.99]
-                           focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/30
-                           disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {busy
-                  ? `Creating PDF… ${progress}%`
-                  : anyLoading
-                    ? "Reading images…"
-                    : `Create PDF from ${ready.length} ${ready.length === 1 ? "image" : "images"}`}
-              </button>
-
-              {busy && (
-                <button
-                  onClick={() => abortRef.current?.abort()}
-                  className="rounded-xl border border-border bg-card px-6 py-4 font-semibold text-foreground transition hover:bg-secondary"
-                >
-                  Cancel
-                </button>
-              )}
-            </div>
-
-            {busy && (
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
-                <div
-                  className="h-full rounded-full bg-accent transition-all"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-            )}
-
+          <ActionButton
+            label={
+              anyLoading
+                ? "Reading images…"
+                : `Create PDF from ${ready.length} ${ready.length === 1 ? "image" : "images"}`
+            }
+            busyLabel="Creating PDF…"
+            busy={busy}
+            progress={progress}
+            disabled={ready.length === 0 || anyLoading}
+            onClick={handleConvert}
+            onCancel={() => abortRef.current?.abort()}
+          >
             {!busy && failed.length > 0 && (
               <p className="text-center text-sm text-red-600">
                 {failed.length} unreadable{" "}
@@ -543,27 +523,25 @@ export default function ImageToPdf() {
                 the PDF.
               </p>
             )}
-          </div>
+          </ActionButton>
         </div>
       )}
 
       {error && <p className="text-red-600">{error}</p>}
 
       {result && (
-        <div className="space-y-4 rounded-xl border border-border bg-card p-5 text-center">
-          <p className="text-foreground">
-            Created a PDF with <span className="font-bold">{result.pages}</span>{" "}
-            {result.pages === 1 ? "page" : "pages"}{" "}
-            <span className="text-muted-foreground">({fmt(result.size)})</span>
-          </p>
-          <a
-            href={result.url}
-            download={result.filename}
-            className="inline-block rounded-xl bg-accent px-6 py-3 font-bold text-accent-foreground transition hover:brightness-95"
-          >
-            Download PDF
-          </a>
-        </div>
+        <ResultCard
+          action={{
+            type: "link",
+            href: result.url,
+            filename: result.filename,
+            label: "Download PDF",
+          }}
+        >
+          Created a PDF with <span className="font-bold">{result.pages}</span>{" "}
+          {result.pages === 1 ? "page" : "pages"}{" "}
+          <span className="text-muted-foreground">({fmt(result.size)})</span>
+        </ResultCard>
       )}
     </div>
   );

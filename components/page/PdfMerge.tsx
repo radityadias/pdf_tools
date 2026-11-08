@@ -1,153 +1,167 @@
 /* eslint-disable @next/next/no-img-element */
-"use client"
+"use client";
 
-import FileDropzone from "../layout/FileDropzone"
-import { PDF_FILES } from "@/lib/files"
-import { formatBytes as fmt } from "@/lib/format"
-import { useRef, useState } from "react"
-import { mergePdf, safeFilename } from "@/services/merge"
-import { renderFirstPage } from "@/services/preview"
+import FileDropzone from "../layout/FileDropzone";
+import ActionButton from "../layout/ActionButton";
+import ResultCard from "../layout/ResultCard";
 
-const MAX_FILES = 50
+import { PDF_FILES } from "@/lib/files";
+import { formatBytes as fmt } from "@/lib/format";
+import { useRef, useState } from "react";
+import { mergePdf, safeFilename } from "@/services/merge";
+import { renderFirstPage } from "@/services/preview";
+
+const MAX_FILES = 50;
 
 type Item = {
-  id: string
-  file: File
-  status: "loading" | "ready" | "error"
-  thumb?: string
-  pages?: number
-}
+  id: string;
+  file: File;
+  status: "loading" | "ready" | "error";
+  thumb?: string;
+  pages?: number;
+};
 
 export default function PdfMerge() {
-  const [items, setItems] = useState<Item[]>([])
-  const [outName, setOutName] = useState("merged")
-  const [overId, setOverId] = useState<string | null>(null) // reorder drop target
+  const [items, setItems] = useState<Item[]>([]);
+  const [outName, setOutName] = useState("merged");
+  const [overId, setOverId] = useState<string | null>(null); // reorder drop target
 
-  const [progress, setProgress] = useState(0)
-  const [busy, setBusy] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [progress, setProgress] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{
-    url: string
-    filename: string
-    size: number
-    pages: number
-  } | null>(null)
+    url: string;
+    filename: string;
+    size: number;
+    pages: number;
+  } | null>(null);
 
-  const dragId = useRef<string | null>(null) // set only while reordering the list
-  const nextId = useRef(0)
+  const dragId = useRef<string | null>(null); // set only while reordering the list
+  const nextId = useRef(0);
 
-  const ready = items.filter((i) => i.status === "ready")
-  const failed = items.filter((i) => i.status === "error")
-  const anyLoading = items.some((i) => i.status === "loading")
-  const totalPages = ready.reduce((sum, i) => sum + (i.pages ?? 0), 0)
-  const totalSize = ready.reduce((sum, i) => sum + i.file.size, 0)
+  const ready = items.filter((i) => i.status === "ready");
+  const failed = items.filter((i) => i.status === "error");
+  const anyLoading = items.some((i) => i.status === "loading");
+  const totalPages = ready.reduce((sum, i) => sum + (i.pages ?? 0), 0);
+  const totalSize = ready.reduce((sum, i) => sum + i.file.size, 0);
 
   function clearResult() {
-    if (result) URL.revokeObjectURL(result.url)
-    setResult(null)
+    if (result) URL.revokeObjectURL(result.url);
+    setResult(null);
   }
 
   function patch(id: string, changes: Partial<Item>) {
-    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, ...changes } : i)))
+    setItems((prev) =>
+      prev.map((i) => (i.id === id ? { ...i, ...changes } : i)),
+    );
   }
 
   async function addFiles(accepted: File[]) {
-    clearResult()
+    clearResult();
 
     const added: Item[] = accepted.map((file) => ({
       id: String(nextId.current++),
       file,
       status: "loading",
-    }))
-    setItems((prev) => [...prev, ...added])
+    }));
+    setItems((prev) => [...prev, ...added]);
 
     // Thumbnails one at a time so many files don't freeze the page
     for (const item of added) {
       try {
-        const { thumb, pages } = await renderFirstPage(item.file, 120)
-        patch(item.id, { status: "ready", thumb, pages })
+        const { thumb, pages } = await renderFirstPage(item.file, 120);
+        patch(item.id, { status: "ready", thumb, pages });
       } catch {
-        patch(item.id, { status: "error" })
+        patch(item.id, { status: "error" });
       }
     }
   }
 
   function removeItem(id: string) {
-    clearResult()
-    setItems((prev) => prev.filter((i) => i.id !== id))
+    clearResult();
+    setItems((prev) => prev.filter((i) => i.id !== id));
   }
 
   function clearAll() {
-    clearResult()
-    setItems([])
-    setError(null)
+    clearResult();
+    setItems([]);
+    setError(null);
   }
 
   function move(index: number, dir: -1 | 1) {
-    const target = index + dir
-    if (target < 0 || target >= items.length) return
-    clearResult()
+    const target = index + dir;
+    if (target < 0 || target >= items.length) return;
+    clearResult();
     setItems((prev) => {
-      const next = [...prev]
-      ;[next[index], next[target]] = [next[target], next[index]]
-      return next
-    })
+      const next = [...prev];
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
   }
 
   function reorder(fromId: string, toId: string) {
     setItems((prev) => {
-      const from = prev.findIndex((i) => i.id === fromId)
-      const to = prev.findIndex((i) => i.id === toId)
-      if (from < 0 || to < 0 || from === to) return prev
-      const next = [...prev]
-      const [moved] = next.splice(from, 1)
-      next.splice(to, 0, moved)
-      return next
-    })
+      const from = prev.findIndex((i) => i.id === fromId);
+      const to = prev.findIndex((i) => i.id === toId);
+      if (from < 0 || to < 0 || from === to) return prev;
+      const next = [...prev];
+      const [moved] = next.splice(from, 1);
+      next.splice(to, 0, moved);
+      return next;
+    });
   }
 
   function sortByName() {
-    clearResult()
+    clearResult();
     setItems((prev) =>
       [...prev].sort((a, b) =>
-        a.file.name.localeCompare(b.file.name, undefined, { numeric: true, sensitivity: "base" })
-      )
-    )
+        a.file.name.localeCompare(b.file.name, undefined, {
+          numeric: true,
+          sensitivity: "base",
+        }),
+      ),
+    );
   }
 
   function reverse() {
-    clearResult()
-    setItems((prev) => [...prev].reverse())
+    clearResult();
+    setItems((prev) => [...prev].reverse());
   }
 
   async function handleMerge() {
-    if (ready.length < 2) return
-    setBusy(true)
-    setError(null)
-    setProgress(0)
-    clearResult()
+    if (ready.length < 2) return;
+    setBusy(true);
+    setError(null);
+    setProgress(0);
+    clearResult();
 
     try {
-      const filename = safeFilename(outName)
+      const filename = safeFilename(outName);
       const { blob, pages } = await mergePdf(
         ready.map((i) => i.file),
         {
           title: filename.replace(/\.pdf$/i, ""),
-          onProgress: (done, total) => setProgress(Math.round((done / total) * 100)),
-        }
-      )
-      setResult({ url: URL.createObjectURL(blob), filename, size: blob.size, pages })
+          onProgress: (done, total) =>
+            setProgress(Math.round((done / total) * 100)),
+        },
+      );
+      setResult({
+        url: URL.createObjectURL(blob),
+        filename,
+        size: blob.size,
+        pages,
+      });
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong")
+      setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {
-      setBusy(false)
+      setBusy(false);
     }
   }
 
   return (
     <div className="mx-auto w-full max-w-7xl space-y-6 p-6">
       {/* Upload */}
-      <FileDropzone 
+      <FileDropzone
         accept={PDF_FILES}
         multiple
         maxFiles={MAX_FILES - items.length}
@@ -156,7 +170,7 @@ export default function PdfMerge() {
         disabled={busy}
         buttonLabel={items.length > 0 ? "Add more PDFs" : "Choose PDFs"}
       />
-      
+
       {/* File list */}
       {items.length > 0 && (
         <div className="space-y-3">
@@ -165,13 +179,22 @@ export default function PdfMerge() {
               {items.length} {items.length === 1 ? "file" : "files"}
               {ready.length > 0 && (
                 <span className="font-normal text-muted-foreground">
-                  {" "}· {totalPages} pages · {fmt(totalSize)}
+                  {" "}
+                  · {totalPages} pages · {fmt(totalSize)}
                 </span>
               )}
             </span>
             {[
-              { label: "Sort A–Z", onClick: sortByName, disabled: items.length < 2 },
-              { label: "Reverse", onClick: reverse, disabled: items.length < 2 },
+              {
+                label: "Sort A–Z",
+                onClick: sortByName,
+                disabled: items.length < 2,
+              },
+              {
+                label: "Reverse",
+                onClick: reverse,
+                disabled: items.length < 2,
+              },
               { label: "Clear all", onClick: clearAll, disabled: false },
             ].map((b) => (
               <button
@@ -191,26 +214,26 @@ export default function PdfMerge() {
                 key={item.id}
                 draggable={!busy}
                 onDragStart={(e) => {
-                  dragId.current = item.id
-                  e.dataTransfer.effectAllowed = "move"
-                  e.dataTransfer.setData("text/plain", item.id) // Firefox needs this
+                  dragId.current = item.id;
+                  e.dataTransfer.effectAllowed = "move";
+                  e.dataTransfer.setData("text/plain", item.id); // Firefox needs this
                 }}
                 onDragOver={(e) => {
-                  if (!dragId.current) return
-                  e.preventDefault()
-                  setOverId(item.id)
+                  if (!dragId.current) return;
+                  e.preventDefault();
+                  setOverId(item.id);
                 }}
                 onDrop={(e) => {
-                  if (!dragId.current) return
-                  e.preventDefault()
-                  reorder(dragId.current, item.id)
-                  clearResult()
-                  dragId.current = null
-                  setOverId(null)
+                  if (!dragId.current) return;
+                  e.preventDefault();
+                  reorder(dragId.current, item.id);
+                  clearResult();
+                  dragId.current = null;
+                  setOverId(null);
                 }}
                 onDragEnd={() => {
-                  dragId.current = null
-                  setOverId(null)
+                  dragId.current = null;
+                  setOverId(null);
                 }}
                 className={`flex items-center gap-3 rounded-xl border bg-card p-3 transition ${
                   overId === item.id && dragId.current !== item.id
@@ -218,7 +241,9 @@ export default function PdfMerge() {
                     : "border-border"
                 } ${busy ? "" : "cursor-grab active:cursor-grabbing"}`}
               >
-                <span aria-hidden className="select-none text-muted-foreground">⋮⋮</span>
+                <span aria-hidden className="select-none text-muted-foreground">
+                  ⋮⋮
+                </span>
                 <span className="w-6 text-center text-sm font-semibold text-muted-foreground">
                   {i + 1}
                 </span>
@@ -239,15 +264,20 @@ export default function PdfMerge() {
                 )}
 
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-semibold text-foreground">{item.file.name}</p>
+                  <p className="truncate font-semibold text-foreground">
+                    {item.file.name}
+                  </p>
                   {item.status === "error" ? (
                     <p className="text-sm text-red-600">
-                      Can&apos;t read this file (password-protected or damaged). It will be skipped.
+                      Can&apos;t read this file (password-protected or damaged).
+                      It will be skipped.
                     </p>
                   ) : (
                     <p className="text-sm text-muted-foreground">
                       {fmt(item.file.size)}
-                      {item.pages ? ` · ${item.pages} ${item.pages === 1 ? "page" : "pages"}` : ""}
+                      {item.pages
+                        ? ` · ${item.pages} ${item.pages === 1 ? "page" : "pages"}`
+                        : ""}
                     </p>
                   )}
                 </div>
@@ -283,7 +313,8 @@ export default function PdfMerge() {
           </ul>
 
           <p className="text-sm text-muted-foreground">
-            Drag files to reorder, or use the arrows. The merged PDF follows this order.
+            Drag files to reorder, or use the arrows. The merged PDF follows
+            this order.
           </p>
         </div>
       )}
@@ -292,7 +323,10 @@ export default function PdfMerge() {
       {items.length > 0 && (
         <div className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="out-name" className="block text-sm font-semibold text-foreground">
+            <label
+              htmlFor="out-name"
+              className="block text-sm font-semibold text-foreground"
+            >
               Output file name
             </label>
             <div className="flex items-center gap-2">
@@ -308,31 +342,14 @@ export default function PdfMerge() {
             </div>
           </div>
 
-          <div className="space-y-2">
-            <button
-              onClick={handleMerge}
-              disabled={ready.length < 2 || busy || anyLoading}
-              className="w-full rounded-xl bg-primary px-6 py-4 text-lg font-bold text-primary-foreground shadow-sm transition
-                         hover:bg-primary-hover active:scale-[0.99]
-                         focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/30
-                         disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {busy
-                ? `Merging… ${progress}%`
-                : anyLoading
-                  ? "Reading files…"
-                  : `Merge ${ready.length} PDFs`}
-            </button>
-
-            {busy && (
-              <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
-                <div
-                  className="h-full rounded-full bg-accent transition-all"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-            )}
-
+          <ActionButton
+            label={anyLoading ? "Reading files…" : `Merge ${ready.length} PDFs`}
+            busyLabel="Merging…"
+            busy={busy}
+            progress={progress}
+            disabled={ready.length < 2 || anyLoading}
+            onClick={handleMerge}
+          >
             {!busy && ready.length < 2 && !anyLoading && (
               <p className="text-center text-sm text-muted-foreground">
                 Add at least two readable PDFs to merge.
@@ -340,32 +357,31 @@ export default function PdfMerge() {
             )}
             {!busy && failed.length > 0 && (
               <p className="text-center text-sm text-red-600">
-                {failed.length} unreadable {failed.length === 1 ? "file" : "files"} will be left
-                out of the merged PDF.
+                {failed.length} unreadable{" "}
+                {failed.length === 1 ? "file" : "files"} will be left out of the
+                merged PDF.
               </p>
             )}
-          </div>
+          </ActionButton>
         </div>
       )}
 
       {error && <p className="text-red-600">{error}</p>}
 
       {result && (
-        <div className="space-y-4 rounded-xl border border-border bg-card p-5 text-center">
-          <p className="text-foreground">
-            Merged <span className="font-bold">{ready.length}</span> files into{" "}
-            <span className="font-bold">{result.pages}</span> pages{" "}
-            <span className="text-muted-foreground">({fmt(result.size)})</span>
-          </p>
-          <a
-            href={result.url}
-            download={result.filename}
-            className="inline-block rounded-xl bg-accent px-6 py-3 font-bold text-accent-foreground transition hover:brightness-95"
-          >
-            Download PDF
-          </a>
-        </div>
+        <ResultCard
+          action={{
+            type: "link",
+            href: result.url,
+            filename: result.filename,
+            label: "Download PDF",
+          }}
+        >
+          Merged <span className="font-bold">{ready.length}</span> files into{" "}
+          <span className="font-bold">{result.pages}</span> pages{" "}
+          <span className="text-muted-foreground">({fmt(result.size)})</span>
+        </ResultCard>
       )}
     </div>
-  )
+  );
 }
