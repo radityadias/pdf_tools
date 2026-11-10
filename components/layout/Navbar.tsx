@@ -33,15 +33,15 @@ export default function Navbar() {
                     </p>
                 </a>
                 ))}
-                
+                {/* Dropdown Tools */}
                 <div className="relative group text-foreground">
                     <button className="flex gap-1 text-md font-bold hover:text-primary">
                         CONVERT PDF
                         <ChevronDown />
                     </button>
                     <div className="absolute hidden z-10 w-xs group-hover:block m-0 left-1/2 -translate-x-1/2">
-                        <div className="mt-7 bg-card border border-gray-200 rounded-xl p-4 grid grid-cols-1 gap-2 font-bold">
-                            {NAVBAR_LINKS.map((link) => (
+                        <div className="mt-7 bg-card border border-gray-200 rounded-xl p-4 grid grid-cols-1 gap-4 font-bold">
+                            {TOOL_LINKS.map((link) => (
                                 <a 
                                     key={link.label}
                                     href={link.href}
