@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "node public/scripts/copy-worker.mjs"
+    "postinstall": "node public/scripts/copy-worker.mjs && node public/scripts/copy-ocr-assets.mjs"
   },
   "dependencies": {
     "@jspawn/ghostscript-wasm": "^0.0.2",
@@ -17,7 +17,8 @@
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^6.4.299",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "tesseract.js": "^7.0.0"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",

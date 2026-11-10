@@ -3,6 +3,7 @@ import {
   Minimize2,
   Scissors,
   Images,
+  FileText,
   type LucideIcon,
 } from "lucide-react";
 
@@ -61,4 +62,13 @@ export const TOOLS: Tool[] = [
     metaDescription:
       "Convert JPG, PNG and WebP images to PDF for free. Reorder, rotate, choose page size and combine into one file. Runs in your browser, no upload.",
   },
+  {
+  slug: "pdf-to-text",
+  title: "PDF to Text",
+  desc: "Extract text from PDFs, including scanned pages with OCR.",
+  icon: FileText,
+  metaTitle: "PDF to Text Converter Online Free: Extract Text with OCR",
+  metaDescription:
+    "Extract text from PDF files for free, including scanned documents with built-in OCR. Copy or download as TXT. Runs in your browser, no upload.",
+},
 ];

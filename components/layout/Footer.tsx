@@ -29,7 +29,7 @@ export default function Footer() {
   const toolLinks: NavLink[] = TOOLS.map((t) => ({ href: `/${t.slug}`, label: t.title }));
 
   return (
-    <footer className="border-t border-border bg-card w-full">
+    <footer className="border-t border-border bg-card w-full mt-15">
       <div className="mx-auto justify-center w-full px-6 py-12">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 text-center">
           <div>

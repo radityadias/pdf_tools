@@ -98,8 +98,6 @@ export async function renderPdfPages(file: File, opts: RenderOptions): Promise<R
       await page.render({ canvas, canvasContext: ctx, viewport }).promise;
 
       const blob = await canvasToBlob(canvas, MIME[format], quality);
-      // Some browsers (older Safari) can't encode WebP and silently return PNG,
-      // so the extension follows the real type of the blob
       const ext = EXT[blob.type] ?? "png";
 
       const rendered: RenderedPage = {
