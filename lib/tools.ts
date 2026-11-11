@@ -4,6 +4,7 @@ import {
   Scissors,
   Images,
   FileText,
+  ListOrdered,
   type LucideIcon,
 } from "lucide-react";
 
@@ -70,5 +71,14 @@ export const TOOLS: Tool[] = [
   metaTitle: "PDF to Text Converter Online Free: Extract Text with OCR",
   metaDescription:
     "Extract text from PDF files for free, including scanned documents with built-in OCR. Copy or download as TXT. Runs in your browser, no upload.",
+},
+{
+  slug: "reorder-pdf",
+  title: "Reorder PDF",
+  desc: "Rearrange, rotate, duplicate and delete PDF pages.",
+  icon: ListOrdered,
+  metaTitle: "Reorder PDF Pages Online Free: Rearrange, Rotate & Delete Pages",
+  metaDescription:
+    "Rearrange PDF pages by drag and drop, rotate or delete pages, then download the new PDF. Free, private and runs in your browser, no upload.",
 },
 ];
