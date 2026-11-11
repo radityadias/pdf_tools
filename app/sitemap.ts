@@ -1,10 +1,12 @@
 import type { MetadataRoute } from "next";
 import { SITE } from "@/lib/site";
 import { TOOLS } from "@/lib/tools";
+import { GUIDES } from "@/lib/guides";
+import { url } from "inspector";
 
 export const dynamic = "force-static";
 
-const INFO_PAGES = ["about", "contact", "privacy-policy", "terms-and-conditions"];
+const INFO_PAGES = ["about", "contact", "privacy-policy", "terms-and-conditions", "guides"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
@@ -18,6 +20,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${SITE.url}/${p}`,
       changeFrequency: "yearly" as const,
       priority: 0.3,
+    })),
+    ...GUIDES.map((g) => ({
+      url: `${SITE.url}/guides/${g.slug}`,
+      changeFrequency: "yearly" as const,
+      priority: 0.6,
     })),
   ];
 }

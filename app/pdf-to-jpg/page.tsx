@@ -1,6 +1,8 @@
 import Hero from "@/components/layout/Hero";
 import PdfToImage from "@/components/page/PdfToImage";
 import JsonLd from "@/components/JsonLd";
+import ToolContent from "@/components/page/ToolContent";
+
 import { toolJsonLd, toolMetadata } from "@/lib/seo";
 
 export const metadata = toolMetadata("pdf-to-jpg");
@@ -16,6 +18,7 @@ export default function Split() {
       <JsonLd data={toolJsonLd("pdf-to-jpg")} />
       <Hero title={heroData.title} desc={heroData.desc} />
       <PdfToImage />
+      <ToolContent slug="pdf-to-jpg" />
     </>
   );
 }

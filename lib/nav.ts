@@ -3,6 +3,7 @@ export type NavLink = { href: string; label: string };
 export const COMPANY_LINKS: NavLink[] = [
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
+  { href: "/guides", label: "Guides" },
 ];
 
 export const LEGAL_LINKS: NavLink[] = [
@@ -21,3 +22,4 @@ export const TOOL_LINKS: NavLink[] = [
   { href: "/pdf-to-jpg", label: "PDF To Image" },
   { href: "/reorder-pdf", label: "Reorder PDF" },
 ]
+

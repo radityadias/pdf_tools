@@ -1,6 +1,8 @@
 import ImageToPdf from "@/components/page/ImageToPdf";
 import JsonLd from "@/components/JsonLd";
 import Hero from "@/components/layout/Hero";
+import ToolContent from "@/components/page/ToolContent";
+
 import { toolJsonLd, toolMetadata } from "@/lib/seo";
 
 export const metadata = toolMetadata("jpg-to-pdf");
@@ -16,6 +18,7 @@ export default function JpgToPdfPage() {
       <JsonLd data={toolJsonLd("jpg-to-pdf")} />
       <Hero title={heroData.title} desc={heroData.desc} />
       <ImageToPdf />
+      <ToolContent slug="jpg-to-pdf" />
     </>
   );
 }
