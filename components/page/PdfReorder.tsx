@@ -80,7 +80,6 @@ function ToolbarButton({
 
 export default function PdfReorder() {
   const [file, setFile] = useState<File | null>(null)
-  // null = untouched, so the list is derived from the page count until the first edit
   const [edited, setEdited] = useState<PageItem[] | null>(null)
   const [history, setHistory] = useState<PageItem[][]>([])
   const [outName, setOutName] = useState("reordered")
@@ -248,7 +247,7 @@ export default function PdfReorder() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6 p-6">
+    <div className="mx-auto w-full max-w-5xl space-y-6 p-6">
       <FileDropzone
         accept={PDF_FILES}
         onFiles={pick}
