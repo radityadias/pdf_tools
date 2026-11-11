@@ -36,7 +36,7 @@ export default function Navbar() {
                 {/* Dropdown Tools */}
                 <div className="relative group text-foreground">
                     <button className="flex gap-1 text-md font-bold hover:text-primary">
-                        CONVERT PDF
+                        Convert PDF
                         <ChevronDown />
                     </button>
                     <div className="absolute hidden z-10 w-xs group-hover:block m-0 left-1/2 -translate-x-1/2">
@@ -86,7 +86,17 @@ export default function Navbar() {
                 <a
                 key={link.label}
                 href={link.href}
-                className="block text-black active:text-primary font-medium py-2 rounded-md"
+                className="block text-sm text-black active:text-primary font-medium py-2 rounded-md"
+                onClick={() => setIsActive(false)}
+                >
+                {link.label}
+                </a>
+            ))}
+            {TOOL_LINKS.map((link) => (
+                <a
+                key={link.label}
+                href={link.href}
+                className="block text-sm text-black active:text-primary font-medium py-2 rounded-md"
                 onClick={() => setIsActive(false)}
                 >
                 {link.label}

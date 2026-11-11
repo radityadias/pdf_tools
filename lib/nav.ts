@@ -11,12 +11,12 @@ export const LEGAL_LINKS: NavLink[] = [
 ];
 
 export const NAVBAR_LINKS: NavLink[] = [
-  { href: "/compress-pdf", label: "COMPRESS PDF" },
-  { href: "/merge-pdf", label: "MERGE PDF" },
-  { href: "/split-pdf", label: "SPLIT PDF" },
+  { href: "/compress-pdf", label: "Compress PDF" },
+  { href: "/merge-pdf", label: "Merge PDF" },
+  { href: "/split-pdf", label: "Split PDF" },
 ]
 
 export const TOOL_LINKS: NavLink[] = [
-  { href: "/jpg-to-pdf", label: "IMAGE TO PDF" },
-  { href: "/pdf-to-jpg", label: "PDF TO IMAGE" },
+  { href: "/jpg-to-pdf", label: "Image To PDF" },
+  { href: "/pdf-to-jpg", label: "PDF To Image" },
 ]
