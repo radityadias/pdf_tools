@@ -21,5 +21,6 @@ export const TOOL_LINKS: NavLink[] = [
   { href: "/jpg-to-pdf", label: "Image To PDF" },
   { href: "/pdf-to-jpg", label: "PDF To Image" },
   { href: "/reorder-pdf", label: "Reorder PDF" },
+  { href: "/sign-pdf", label: "Sign PDF"}
 ]
 
