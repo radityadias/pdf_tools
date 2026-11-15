@@ -5,6 +5,7 @@ import {
   Images,
   FileText,
   ListOrdered,
+  PenLine,
   type LucideIcon,
 } from "lucide-react";
 
@@ -80,5 +81,14 @@ export const TOOLS: Tool[] = [
   metaTitle: "Reorder PDF Pages Online Free: Rearrange, Rotate & Delete Pages",
   metaDescription:
     "Rearrange PDF pages by drag and drop, rotate or delete pages, then download the new PDF. Free, private and runs in your browser, no upload.",
+},
+{
+  slug: "sign-pdf",
+  title: "Sign PDF",
+  desc: "Add your signature, text and date to a PDF.",
+  icon: PenLine,
+  metaTitle: "Sign PDF Online Free: Add Your Signature to a PDF",
+  metaDescription:
+    "Sign a PDF online for free. Draw, type or upload your signature, place it on any page and download. Runs in your browser, no upload.",
 },
 ];

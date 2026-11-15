@@ -442,4 +442,68 @@ export const TOOL_CONTENT: Record<string, ToolContent> = {
     ],
     related: ["merge-pdf", "split-pdf", "compress-pdf"],
   },
+  "sign-pdf": {
+    intro: [
+      "Contracts, forms, permission letters and applications often come back to you as a PDF that needs a signature. Printing, signing and scanning takes time, and not everyone has a printer or scanner. Sign PDF lets you add your signature, a line of text and today’s date to a PDF directly in your browser, in a few clicks.",
+      "You can draw your signature with a mouse, finger or stylus, type your name in a handwriting-style font, or upload a photo of your real signature. The tool can remove the paper background from a photo so only the ink remains. Nothing is uploaded: the PDF and your signature stay on your device.",
+    ],
+    steps: [
+      {
+        title: "Choose your PDF",
+        text: "Select the file or drop it onto the page. The first page appears so you can see where to sign.",
+      },
+      {
+        title: "Create your signature",
+        text: "Draw it, type it, or upload an image. Pick an ink colour, then press Use this signature. You can also add text such as your name or job title, and today’s date in several formats.",
+      },
+      {
+        title: "Place it on the page",
+        text: "Drag the item to the right spot and drag the round corner handle to resize it. Use the arrow buttons to change pages, and Add to all pages for initials that repeat on every page.",
+      },
+      {
+        title: "Sign and download",
+        text: "Press Sign PDF, then download the file. Open it and check each page before you send it.",
+      },
+    ],
+    tips: [
+      "For an uploaded signature, sign with a dark pen on plain white paper and photograph it in even light. Then adjust the cleaning strength until only the ink remains.",
+      "Use Add to all pages for initials, so you don’t have to place them on every page by hand.",
+      "On a phone, use the Smaller and Larger buttons if dragging the corner handle feels fiddly.",
+      "Zoom into the downloaded file to check that the signature sits exactly where you wanted it.",
+    ],
+    limits: [
+      "The tool adds a visible signature as an image. It is not a certified digital signature, and some documents require one from an authorised provider. Check what your recipient needs.",
+      "Signatures you create are kept only while the page is open. They are gone when you close or reload it.",
+      "Fillable form fields are not filled by this tool. It places signatures, text and dates on top of the page.",
+      "PDFs with more than 500 pages can’t be signed here. Split them first.",
+      "Password-protected PDFs can’t be opened.",
+    ],
+    faqs: [
+      {
+        q: "Is my signature or PDF uploaded anywhere?",
+        a: "No. Everything happens in your browser. Your PDF, your drawn or typed signature and your uploaded image never leave your device.",
+      },
+      {
+        q: "Is a signature made here legally valid?",
+        a: "It depends on the document, the recipient and your country. A visible signature is accepted for many everyday forms, but some contracts and official procedures require a certified electronic signature. When in doubt, ask whoever asked you to sign.",
+      },
+      {
+        q: "Can I sign every page?",
+        a: "Yes. Place the item on one page and choose Add to all pages. You can also place items on each page separately.",
+      },
+      {
+        q: "Can I use a photo of my signature?",
+        a: "Yes. Choose Upload, select the image and keep background removal on. The paper becomes transparent and the ink takes your chosen colour.",
+      },
+      {
+        q: "Does it work on pages that are rotated or scanned sideways?",
+        a: "Yes. The signature is placed as it looks on screen, even when the page itself is rotated.",
+      },
+      {
+        q: "Does it change the rest of the document?",
+        a: "No. The original pages, text and bookmarks stay as they were. The signature, text and date are added on top.",
+      },
+    ],
+    related: ["reorder-pdf", "merge-pdf", "compress-pdf"],
+  },
 };
