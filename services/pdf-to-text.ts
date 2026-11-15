@@ -1,4 +1,4 @@
-import type { PDFPageProxy } from "pdfjs-dist";
+import type { PDFPageProxy, Util } from "pdfjs-dist";
 import { checkPageText, type OcrReason } from "./page-check";
 
 type TesseractWorker = Awaited<ReturnType<typeof import("tesseract.js").createWorker>>;
@@ -198,7 +198,6 @@ function itemsToText(items: Item[]): string {
 
   for (const item of items) {
     if (!item.str && !item.hasEOL) continue;
-
     const x = item.transform[4];
     const y = item.transform[5];
     const size = item.height || Math.abs(item.transform[3]) || 10;
