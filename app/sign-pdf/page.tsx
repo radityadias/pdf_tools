@@ -7,7 +7,7 @@ import { toolJsonLd, toolMetadata } from "@/lib/seo";
 
 export const metadata = toolMetadata("merge-pdf");
 
-export default function MergePage() {
+export default function SignPage() {
   const heroData = {
     title: "Sign PDF",
     desc: "Add your signature, text and date to a PDF.",

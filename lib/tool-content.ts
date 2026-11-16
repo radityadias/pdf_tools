@@ -506,4 +506,129 @@ export const TOOL_CONTENT: Record<string, ToolContent> = {
     ],
     related: ["reorder-pdf", "merge-pdf", "compress-pdf"],
   },
+  "protect-pdf": {
+    intro: [
+      "A PDF with bank details, an ID scan, a contract or a medical letter shouldn’t be readable by anyone who finds the file. Protect PDF adds a password to your document so that only people who know it can open it, and you can also limit printing, copying and editing.",
+      "The encryption happens in your browser. Your file and your password never leave your device, and nothing is stored, which also means nobody, including us, can recover a password you forget. You can use AES-256 encryption, or AES-128 if the recipient uses very old PDF software.",
+    ],
+    steps: [
+      {
+        title: "Choose your PDF",
+        text: "Select the file or drop it onto the page. The tool checks whether it already has a password.",
+      },
+      {
+        title: "Set a password",
+        text: "Type a password and confirm it, or press Generate a strong password and copy it. The strength bar shows how hard it would be to guess.",
+      },
+      {
+        title: "Choose protection options",
+        text: "Pick AES-256 (recommended) or AES-128, then decide whether people may print, copy or edit the document after opening it.",
+      },
+      {
+        title: "Protect and test",
+        text: "Press Protect PDF and download the file. Open it once to confirm that it asks for your password.",
+      },
+    ],
+    tips: [
+      "Use at least 12 characters, or a few unrelated words in a row. Long passwords beat short complicated ones.",
+      "Send the password through a different channel than the file, for example the file by email and the password by chat.",
+      "Keep the unprotected original somewhere safe until you have tested the protected copy.",
+      "Use the password generator and save the result in a password manager.",
+    ],
+    limits: [
+      "A forgotten password cannot be recovered by anyone. Nothing is stored, and the encryption cannot be reversed without it.",
+      "Printing, copying and editing limits rely on the PDF viewer honouring them. Some software ignores them, so the open password is the real protection.",
+      "AES-256 needs reasonably modern PDF software. Choose AES-128 if the recipient has trouble opening the file.",
+      "Files up to 100 MB are supported, and the password can be up to 127 characters.",
+      "A weak password can still be guessed by someone who tries many combinations, even with strong encryption.",
+    ],
+    faqs: [
+      {
+        q: "Are my file and password uploaded anywhere?",
+        a: "No. The encryption runs in your browser on your own device. Your PDF and your password are never sent to a server.",
+      },
+      {
+        q: "How strong is the protection?",
+        a: "AES-256 is a standard, strong encryption method. How safe the file is in practice depends mostly on your password, so choose a long, unique one.",
+      },
+      {
+        q: "Can I add a password to a PDF that already has one?",
+        a: "Yes. Enter the current password when asked, and the file is protected again with the new settings.",
+      },
+      {
+        q: "Will the text in my PDF still be selectable?",
+        a: "Yes, for people who have the password and are allowed to copy. The tool encrypts the file without turning pages into images, so quality and size stay almost the same.",
+      },
+      {
+        q: "What happens if I forget the password?",
+        a: "The file cannot be opened. That is how the protection works, so keep the password somewhere safe.",
+      },
+    ],
+    related: ["unlock-pdf", "sign-pdf", "merge-pdf"],
+  },
+
+  "unlock-pdf": {
+    intro: [
+      "A PDF that asks for a password every time you open it, or won’t let you print or copy text, gets tiresome when the file is yours. Unlock PDF creates a copy without the password or restrictions, as long as you know the password when one is needed.",
+      "Everything happens in your browser, so your file and password stay on your device. The tool can’t guess or crack passwords. It removes protection you are entitled to remove, and your original file is never changed.",
+    ],
+    steps: [
+      {
+        title: "Choose your PDF",
+        text: "Select the file or drop it onto the page. The tool tells you whether it needs a password, has restrictions, or isn’t protected at all.",
+      },
+      {
+        title: "Enter the password if asked",
+        text: "If the PDF needs a password to open, type it. A wrong password shows an error, and you can try again.",
+      },
+      {
+        title: "Confirm and unlock",
+        text: "Tick the box to confirm that the file is yours or that you have permission, then press Unlock PDF.",
+      },
+      {
+        title: "Download the copy",
+        text: "Download the unlocked file. It opens without a password and without printing, copying or editing limits.",
+      },
+    ],
+    tips: [
+      "If the file opens without a password but won’t print or copy, it has restrictions. Unlocking removes them.",
+      "Keep the protected original if the password protects something sensitive. The unlocked copy can be opened by anyone.",
+      "If you can’t remember the password, check the email or message the file came with, or ask whoever sent it.",
+      "Delete the unlocked copy when you no longer need it if it holds private information.",
+    ],
+    limits: [
+      "This tool can’t recover a forgotten password or break into a file you can’t open.",
+      "Only unlock files you own or have permission to change. Protection often exists for a reason.",
+      "Some unusual kinds of PDF protection, such as certificate-based encryption, aren’t supported.",
+      "Files up to 100 MB are supported.",
+      "A PDF that isn’t protected has nothing to unlock, and the tool tells you so.",
+    ],
+    faqs: [
+      {
+        q: "Are my file and password uploaded anywhere?",
+        a: "No. The password check and the unlocking happen in your browser. Your PDF and your password never leave your device.",
+      },
+      {
+        q: "Can you recover a password I forgot?",
+        a: "No. The tool needs the correct password to open a protected file. It can’t guess or crack it.",
+      },
+      {
+        q: "Why can’t I print or copy text from my PDF?",
+        a: "The creator may have added restrictions. If the file is yours, Unlock PDF makes a copy without them.",
+      },
+      {
+        q: "Does unlocking change my original file?",
+        a: "Never. You get a new file, and your original stays exactly as it was.",
+      },
+      {
+        q: "Does unlocking reduce quality?",
+        a: "No. The pages are not re-drawn or compressed, so the unlocked copy looks like the original.",
+      },
+      {
+        q: "Why does it say my PDF isn’t protected?",
+        a: "Some files only look restricted because of the viewer you use. If the tool finds no password or restrictions in the file, there is nothing to remove.",
+      },
+    ],
+    related: ["protect-pdf", "compress-pdf", "merge-pdf"],
+  },
 };

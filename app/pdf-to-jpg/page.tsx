@@ -7,7 +7,7 @@ import { toolJsonLd, toolMetadata } from "@/lib/seo";
 
 export const metadata = toolMetadata("pdf-to-jpg");
 
-export default function Split() {
+export default function PdfToImagePage() {
   const heroData = {
     title: "PDF to JPG",
     desc: "Convert PDF files into images.",

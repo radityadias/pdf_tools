@@ -7,7 +7,7 @@ import { toolJsonLd, toolMetadata } from "@/lib/seo";
 
 export const metadata = toolMetadata("reorder-pdf");
 
-export default function Reorder() {
+export default function ReorderPage() {
   const heroData = {
     title: "Reorder PDF",
     desc: "Rearrange, rotate, duplicate and delete PDF pages.",

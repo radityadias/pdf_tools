@@ -7,10 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "postinstall": "node public/scripts/copy-worker.mjs && node public/scripts/copy-ocr-assets.mjs"
+    "postinstall": "node public/scripts/copy-worker.mjs && node public/scripts/copy-ocr-assets.mjs && node public/scripts/copy-qpdf-wasm.mjs"
   },
   "dependencies": {
     "@jspawn/ghostscript-wasm": "^0.0.2",
+    "@neslinesli93/qpdf-wasm": "^0.3.1",
     "fflate": "^0.8.3",
     "lucide-react": "^1.66.0",
     "next": "16.4.3",

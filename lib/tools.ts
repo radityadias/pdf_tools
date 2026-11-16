@@ -6,6 +6,8 @@ import {
   FileText,
   ListOrdered,
   PenLine,
+  KeyRound,
+  Lock,
   type LucideIcon,
 } from "lucide-react";
 
@@ -90,5 +92,23 @@ export const TOOLS: Tool[] = [
   metaTitle: "Sign PDF Online Free: Add Your Signature to a PDF",
   metaDescription:
     "Sign a PDF online for free. Draw, type or upload your signature, place it on any page and download. Runs in your browser, no upload.",
+},
+{
+  slug: "protect-pdf",
+  title: "Protect PDF",
+  desc: "Add a password to a PDF and control printing, copying and editing.",
+  icon: Lock,
+  metaTitle: "Protect PDF with a Password Online Free: Encrypt PDF",
+  metaDescription:
+    "Add a password to your PDF with AES encryption. Set permissions for printing, copying and editing. Free, private and runs in your browser, no upload.",
+},
+{
+  slug: "unlock-pdf",
+  title: "Unlock PDF",
+  desc: "Remove a password or restrictions from a PDF you have the right to open.",
+  icon: KeyRound,
+  metaTitle: "Unlock PDF Online Free: Remove a PDF Password",
+  metaDescription:
+    "Remove the password or restrictions from a PDF when you know the password. Free, private and runs in your browser, no upload.",
 },
 ];

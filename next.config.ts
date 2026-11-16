@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { browser } from "react-dom";
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -14,6 +15,11 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+    resolveAlias: {
+      fs: {
+        browser: "./lib/empty-module.ts"
+      }
+    }
   },
   output: "export",
   images: { unoptimized: true },

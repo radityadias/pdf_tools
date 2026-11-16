@@ -45,3 +45,4 @@ next-env.d.ts
 
 public/tesseract/worker.min.js
 public/tesseract/core/
+public/qpdf/
