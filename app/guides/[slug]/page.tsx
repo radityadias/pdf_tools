@@ -45,7 +45,7 @@ export default async function GuidePage({ params }: Props) {
   });
 
   return (
-    <PageShell title={guide.title} intro={guide.description} updated={updated}>
+    <PageShell title={guide.title} intro={guide.excerpt} updated={updated}>
       {guide.sections.map((s) => (
         <Section key={s.heading} title={s.heading}>
           {s.paragraphs?.map((p) => <p key={p}>{p}</p>)}
