@@ -71,7 +71,7 @@ export default async function GuidePage({ params }: Props) {
           <p>{tool.desc} It runs in your browser, so your files stay on your device.</p>
           <Link
             href={`/${tool.slug}`}
-            className="inline-block rounded-xl bg-primary px-6 py-3 font-bold !text-primary-foreground !no-underline transition hover:bg-primary-hover"
+            className="inline-block rounded-xl bg-primary px-6 py-3 font-bold text-primary-foreground! no-underline! transition hover:bg-primary-hover"
           >
             Open {tool.title}
           </Link>

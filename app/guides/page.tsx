@@ -92,7 +92,7 @@ export default function GuidesPage() {
     <main className="bg-background text-foreground mt-5">
       <JsonLd data={jsonLd} />
 
-      <div className="mx-auto max-w-5xl px-6 py-14">
+      <div className="mx-auto w-full px-8 py-14">
         <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
           <Link href="/" className="hover:text-foreground">
             Home
