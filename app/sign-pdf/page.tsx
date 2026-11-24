@@ -5,7 +5,7 @@ import ToolContent from "@/components/page/ToolContent";
 
 import { toolJsonLd, toolMetadata } from "@/lib/seo";
 
-export const metadata = toolMetadata("merge-pdf");
+export const metadata = toolMetadata("sign-pdf");
 
 export default function SignPage() {
   const heroData = {
@@ -15,7 +15,7 @@ export default function SignPage() {
 
   return (
     <>
-      <JsonLd data={toolJsonLd("merge-pdf")} />
+      <JsonLd data={toolJsonLd("sign-pdf")} />
       <Hero title={heroData.title} desc={heroData.desc} />
       <PdfSign />
       <ToolContent slug="sign-pdf" />
