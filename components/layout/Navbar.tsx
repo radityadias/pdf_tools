@@ -13,7 +13,7 @@ export default function Navbar() {
             <div className="flex justify-between h-16 items-center">
             
             {/* Logo / Brand Name */}
-            <div className="flex-shrink-0 flex items-center">
+            <div className="shrink-0 flex items-center">
                 <a href="/" className="flex flex-row items-end font-bold text-foreground">
                     <p className="text-4xl!">PDF</p>
                     <p className="text-primary text-xl!">Daily</p>

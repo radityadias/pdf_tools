@@ -1,3 +1,5 @@
+export type Topic = "size" | "organize" | "convert" | "secure";
+
 export type GuideSection = {
   heading: string;
   paragraphs?: string[];
@@ -9,9 +11,50 @@ export type Guide = {
   slug: string;
   title: string;
   description: string;
+  topic: Topic;
+  excerpt: string; // shown on cards and as the intro on the guide page
   tool: string; // slug of the tool this guide leads to
   updated: string; // YYYY-MM-DD
   sections: GuideSection[];
+};
+
+export function readingMinutes(guide: Guide): number {
+  const text = guide.sections
+    .flatMap((s) => [s.heading, ...(s.paragraphs ?? []), ...(s.list ?? [])])
+    .join(" ");
+  return Math.max(1, Math.round(text.split(/\s+/).length / 200));
+}
+
+export function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+export const TOPICS: Record<Topic, { title: string; blurb: string }> = {
+  size: {
+    title: "Reduce file size",
+    blurb:
+      "Get a PDF under an email or upload limit without guessing which setting to use.",
+  },
+  organize: {
+    title: "Combine and organize",
+    blurb:
+      "Merge, split, reorder and clean up documents so every page ends up where you want it.",
+  },
+  convert: {
+    title: "Convert and extract",
+    blurb:
+      "Turn pages into images, photos into PDFs, and scans into text you can copy.",
+  },
+  secure: {
+    title: "Protect and sign",
+    blurb:
+      "Add passwords, remove restrictions from your own files and sign documents.",
+  },
 };
 
 export const GUIDES: Guide[] = [
@@ -21,6 +64,10 @@ export const GUIDES: Guide[] = [
     description:
       "Practical ways to shrink a PDF for strict upload limits: choosing the right compression level, removing pages, and knowing when a PDF can’t get any smaller.",
     tool: "compress-pdf",
+    topic: "size",
+    excerpt:
+      "Why some PDFs shrink easily and others can’t, the order to try things in, and what to do when a scan is still too big for the upload form.",
+
     updated: "2026-11-11",
     sections: [
       {
@@ -70,6 +117,10 @@ export const GUIDES: Guide[] = [
     description:
       "A short checklist for combining several PDFs into one document without scrambled pages, on a computer or a phone.",
     tool: "merge-pdf",
+    topic: "organize",
+    excerpt:
+      "A short preparation checklist, how to put files in order, and how to check that the merged document has every page it should.",
+
     updated: "2026-11-11",
     sections: [
       {
@@ -117,6 +168,9 @@ export const GUIDES: Guide[] = [
     description:
       "Why you can’t copy text from a scanned PDF, and how to extract it with OCR in your browser, including tips for more accurate results.",
     tool: "pdf-to-text",
+    topic: "convert",
+    excerpt:
+      "Why you can’t copy text from a scan, how OCR in the browser works, and the scanning habits that make the biggest difference to accuracy.",
     updated: "2026-11-11",
     sections: [
       {
