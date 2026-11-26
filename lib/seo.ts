@@ -46,6 +46,7 @@ export function websiteJsonLd() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: SITE.name,
+    alternateName: ["DailyPDF", "dailypdf.online"],
     url: SITE.url,
     description: SITE.description,
   };

@@ -12,7 +12,7 @@ import { TOOLS } from "@/lib/tools";
 
 export const metadata: Metadata = {
   title: {
-    absolute: `Free PDF Tools: Compress, Merge, Split & Sign | ${SITE.name}`,
+    absolute: `${SITE.name}: Free PDF Tools to Compress, Merge, Split & Sign` ,
   },
   description:
     "Compress, merge, split, sign, protect and convert PDFs without uploading them. Every tool runs in your browser, with no account and no watermark.",
